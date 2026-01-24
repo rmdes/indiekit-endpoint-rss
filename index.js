@@ -52,7 +52,7 @@ export default class RssEndpoint {
 
   /**
    * Protected routes (require authentication)
-   * Admin dashboard and feed management
+   * Admin dashboard and feed management (write operations)
    */
   get routes() {
     // Dashboard
@@ -61,27 +61,31 @@ export default class RssEndpoint {
     // Manual sync trigger
     protectedRouter.post("/sync", dashboardController.sync);
 
+    // Feed management (protected - requires auth)
+    protectedRouter.post("/api/feeds", express.json(), feedsController.add);
+    protectedRouter.delete("/api/feeds/:id", feedsController.remove);
+    protectedRouter.patch("/api/feeds/:id", express.json(), feedsController.toggle);
+
+    // Manual refresh (protected)
+    protectedRouter.post("/api/refresh", statusController.refresh);
+
     return protectedRouter;
   }
 
   /**
    * Public routes (no authentication required)
-   * JSON API endpoints for frontend
+   * Read-only JSON API endpoints for frontend
    */
   get routesPublic() {
-    // Feeds API
+    // Feeds API (read-only)
     publicRouter.get("/api/feeds", feedsController.list);
-    publicRouter.post("/api/feeds", express.json(), feedsController.add);
-    publicRouter.delete("/api/feeds/:id", feedsController.remove);
-    publicRouter.patch("/api/feeds/:id", express.json(), feedsController.toggle);
 
-    // Items API
+    // Items API (read-only)
     publicRouter.get("/api/items", itemsController.list);
     publicRouter.get("/api/items/:id", itemsController.get);
 
-    // Status API
+    // Status API (read-only)
     publicRouter.get("/api/status", statusController.status);
-    publicRouter.post("/api/refresh", statusController.refresh);
 
     return publicRouter;
   }

@@ -1,0 +1,50 @@
+{
+  "rss": {
+    "title": "RSS Reader",
+    "feeds": "Feeds",
+    "items": "Feed Items",
+    "addFeed": "Add Feed",
+    "removeFeed": "Remove Feed",
+    "enableFeed": "Enable",
+    "disableFeed": "Disable",
+    "syncNow": "Sync Now",
+    "syncing": "Syncing...",
+    "lastSynced": "Last synced",
+    "noFeeds": "No feeds configured. Add a feed URL to get started.",
+    "noItems": "No items found.",
+    "feedUrl": "Feed URL",
+    "feedUrlPlaceholder": "https://example.com/feed.xml",
+    "recentItems": "Recent Items",
+    "viewAll": "View All",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "itemCount": "items",
+    "actions": "Actions",
+    "status": "Status",
+    "syncStatus": "Sync Status",
+    "feedsCount": "Total Feeds",
+    "itemsCount": "Total Items",
+    "lastSync": "Last Sync",
+    "nextSync": "Next Sync",
+    "never": "Never",
+    "error": {
+      "invalidUrl": "Please enter a valid feed URL",
+      "feedExists": "This feed has already been added",
+      "feedNotFound": "Feed not found",
+      "fetchFailed": "Failed to fetch feed",
+      "noConfig": "RSS endpoint not configured correctly",
+      "noDatabase": "Database not available"
+    },
+    "success": {
+      "feedAdded": "Feed added successfully",
+      "feedRemoved": "Feed removed",
+      "feedEnabled": "Feed enabled",
+      "feedDisabled": "Feed disabled",
+      "syncComplete": "Sync complete"
+    },
+    "widget": {
+      "description": "View aggregated RSS feeds on the public page",
+      "view": "View News Page"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "@rmdes/indiekit-endpoint-rss",
+  "version": "1.0.0",
+  "description": "RSS feed reader endpoint for Indiekit. Aggregates multiple feeds, caches in MongoDB, displays on frontend.",
+  "keywords": [
+    "indiekit",
+    "indiekit-plugin",
+    "indieweb",
+    "rss",
+    "atom",
+    "feed",
+    "reader",
+    "aggregator"
+  ],
+  "homepage": "https://github.com/rmdes/indiekit-endpoint-rss",
+  "bugs": {
+    "url": "https://github.com/rmdes/indiekit-endpoint-rss/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmdes/indiekit-endpoint-rss.git"
+  },
+  "author": {
+    "name": "Ricardo Mendes",
+    "url": "https://rmendes.net"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "lib",
+    "locales",
+    "views",
+    "index.js"
+  ],
+  "dependencies": {
+    "@indiekit/error": "^1.0.0-beta.25",
+    "express": "^5.0.0",
+    "rss-parser": "^3.13.0",
+    "sanitize-html": "^2.13.0"
+  },
+  "peerDependencies": {
+    "@indiekit/indiekit": ">=1.0.0-beta.25"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

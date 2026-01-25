@@ -8,6 +8,7 @@
     "enableFeed": "Enable",
     "disableFeed": "Disable",
     "syncNow": "Sync Now",
+    "clearResync": "Clear & Re-sync",
     "syncing": "Syncing...",
     "lastSynced": "Last synced",
     "noFeeds": "No feeds configured. Add a feed URL to get started.",
@@ -40,7 +41,8 @@
       "feedRemoved": "Feed removed",
       "feedEnabled": "Feed enabled",
       "feedDisabled": "Feed disabled",
-      "syncComplete": "Sync complete"
+      "syncComplete": "Sync complete",
+      "clearResync": "Items cleared and re-synced"
     },
     "widget": {
       "description": "View aggregated RSS feeds on the public page",

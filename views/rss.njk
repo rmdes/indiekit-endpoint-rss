@@ -284,13 +284,22 @@
         <span class="rss-feed-error">{{ syncState.lastError }}</span>
         {% endif %}
       </div>
-      <form action="{{ publicUrl }}/sync" method="post">
-        {{ button({
-          type: "submit",
-          text: __("rss.syncNow"),
-          disabled: syncState.syncing
-        }) }}
-      </form>
+      <div style="display: flex; gap: 0.5rem;">
+        <form action="{{ publicUrl }}/sync" method="post" style="margin: 0;">
+          {{ button({
+            type: "submit",
+            text: __("rss.syncNow"),
+            disabled: syncState.syncing
+          }) }}
+        </form>
+        <form action="{{ publicUrl }}/clear-resync" method="post" style="margin: 0;" id="clear-resync-form">
+          {{ button({
+            type: "submit",
+            text: __("rss.clearResync"),
+            disabled: syncState.syncing
+          }) }}
+        </form>
+      </div>
     </div>
 
     {# Stats #}
@@ -469,6 +478,45 @@
           alert('Failed to update feed: ' + err.message);
         }
       });
+    });
+
+    // Handle clear & re-sync
+    document.getElementById('clear-resync-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!confirm('This will delete all cached items and re-fetch them from feeds. Continue?')) return;
+
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn?.textContent;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Clearing...';
+      }
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(`Cleared ${data.itemsCleared} items, re-fetched ${data.itemsAdded} items from ${data.feedsProcessed} feeds.`);
+          location.reload();
+        } else {
+          alert(data.error || 'Failed to clear & re-sync');
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+        }
+      } catch (err) {
+        alert('Failed to clear & re-sync: ' + err.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
     });
 
     // Handle delete feed

@@ -61,6 +61,9 @@ export default class RssEndpoint {
     // Manual sync trigger
     protectedRouter.post("/sync", dashboardController.sync);
 
+    // Clear items and re-sync
+    protectedRouter.post("/clear-resync", dashboardController.clearResync);
+
     // Feed management (protected - requires auth)
     protectedRouter.post("/api/feeds", express.json(), feedsController.add);
     protectedRouter.delete("/api/feeds/:id", feedsController.remove);

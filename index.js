@@ -19,6 +19,7 @@ const defaults = {
   maxItemsPerFeed: 50,
   fetchTimeout: 10_000,
   maxConcurrentFetches: 3,
+  retentionDays: 30,
 };
 
 export default class RssEndpoint {

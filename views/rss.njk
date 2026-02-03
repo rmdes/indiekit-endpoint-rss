@@ -312,6 +312,9 @@
   {% else %}
     Feeds are up to date, nothing new to sync
   {% endif %}
+  {% if syncedPruned and syncedPruned != "0" %}
+    ({{ syncedPruned }} old items pruned)
+  {% endif %}
 </div>
 {% endif %}
 

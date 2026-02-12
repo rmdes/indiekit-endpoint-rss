@@ -63,8 +63,9 @@
 
     {# Add Feed Form #}
     {% call section({ title: __("rss.addFeed") }) %}
-      <form class="rss-add-form" action="{{ mountPath }}/api/feeds" method="post" id="add-feed-form">
+      <form class="input-button-group" action="{{ mountPath }}/api/feeds" method="post" id="add-feed-form">
         <input
+          class="input"
           type="url"
           name="url"
           placeholder="{{ __("rss.feedUrlPlaceholder") }}"

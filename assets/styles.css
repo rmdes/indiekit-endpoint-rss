@@ -75,28 +75,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Add feed form */
-.rss-add-form {
-  display: flex;
-  gap: var(--space-xs);
-}
-
-.rss-add-form input {
-  appearance: none;
-  background-color: var(--color-background);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-s);
-  flex: 1;
-  font-size: var(--step--1);
-  padding: var(--space-2xs) var(--space-s);
-}
-
-.rss-add-form input:focus {
-  border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
-}
-
 /* Feed list */
 .rss-feed-list {
   list-style: none;

@@ -1,346 +1,9 @@
-{% extends "document.njk" %}
+{% extends "layouts/rss.njk" %}
 
-{% block content %}
-<style>
-  .rss-dashboard {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl, 2rem);
-  }
-
-  .rss-section {
-    background: var(--color-offset, #f5f5f5);
-    border-radius: var(--border-radius-small, 0.5rem);
-    padding: var(--space-m, 1.5rem);
-  }
-
-  .rss-section h2 {
-    font: var(--font-heading, bold 1.25rem/1.4 sans-serif);
-    margin-block-end: var(--space-s, 0.75rem);
-    padding-block-end: var(--space-xs, 0.5rem);
-    border-block-end: 1px solid var(--color-outline-variant, #ddd);
-  }
-
-  /* Notifications */
-  .rss-notification {
-    border-radius: var(--border-radius-small, 0.25rem);
-    padding: var(--space-s, 0.75rem) var(--space-m, 1rem);
-    margin-block-end: var(--space-s, 0.75rem);
-  }
-  .rss-notification--success {
-    background: var(--color-success, #d4edda);
-    color: var(--color-on-success, #155724);
-  }
-  .rss-notification--warning {
-    background: #fff3cd;
-    color: #856404;
-  }
-  .rss-notification--error {
-    background: var(--color-error, #f8d7da);
-    color: var(--color-on-error, #721c24);
-  }
-
-  /* Stats grid */
-  .rss-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: var(--space-s, 0.75rem);
-  }
-  .rss-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: var(--space-s, 0.75rem);
-    background: var(--color-background, #fff);
-    border-radius: var(--border-radius-small, 0.5rem);
-    text-align: center;
-  }
-  .rss-stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-accent, #ff6600);
-  }
-  .rss-stat-label {
-    font-size: 0.75rem;
-    color: var(--color-on-offset, #666);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  /* Sync status */
-  .rss-sync-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-m, 1rem);
-    flex-wrap: wrap;
-  }
-  .rss-sync-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .rss-sync-label {
-    font-size: 0.75rem;
-    color: var(--color-on-offset, #666);
-    text-transform: uppercase;
-  }
-  .rss-sync-time {
-    font-weight: 500;
-  }
-  .rss-syncing {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-accent, #ff6600);
-  }
-  .rss-spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid currentColor;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: rss-spin 0.8s linear infinite;
-  }
-  @keyframes rss-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Add feed form */
-  .rss-add-form {
-    display: flex;
-    gap: 0.5rem;
-  }
-  .rss-add-form input {
-    flex: 1;
-    appearance: none;
-    background-color: var(--color-background, #fff);
-    border: 1px solid var(--color-outline-variant, #ccc);
-    border-radius: var(--border-radius-small, 0.25rem);
-    font: var(--font-body, 0.875rem/1.4 sans-serif);
-    padding: calc(var(--space-s, 0.75rem) / 2) var(--space-s, 0.75rem);
-  }
-  .rss-add-form input:focus {
-    border-color: var(--color-primary, #0066cc);
-    outline: 2px solid var(--color-primary, #0066cc);
-    outline-offset: 1px;
-  }
-
-  /* Feed list */
-  .rss-feed-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .rss-feed-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--color-outline-variant, #eee);
-  }
-  .rss-feed-item:last-child { border-bottom: none; }
-  .rss-feed-icon {
-    width: 32px;
-    height: 32px;
-    object-fit: cover;
-    border-radius: 0.25rem;
-    flex-shrink: 0;
-  }
-  .rss-feed-icon-placeholder {
-    width: 32px;
-    height: 32px;
-    background: var(--color-outline-variant, #ddd);
-    border-radius: 0.25rem;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-on-offset, #666);
-    font-size: 1rem;
-  }
-  .rss-feed-info {
-    flex: 1;
-    min-width: 0;
-  }
-  .rss-feed-title {
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .rss-feed-meta {
-    display: flex;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--color-on-offset, #666);
-  }
-  .rss-feed-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-  .rss-feed-error {
-    color: #d32f2f;
-    font-size: 0.75rem;
-  }
-
-  /* Item list */
-  .rss-item-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .rss-item {
-    display: flex;
-    gap: 0.75rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--color-outline-variant, #eee);
-  }
-  .rss-item:last-child { border-bottom: none; }
-  .rss-item-image {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 0.25rem;
-    flex-shrink: 0;
-  }
-  .rss-item-placeholder {
-    width: 60px;
-    height: 60px;
-    background: var(--color-outline-variant, #ddd);
-    border-radius: 0.25rem;
-    flex-shrink: 0;
-  }
-  .rss-item-info {
-    flex: 1;
-    min-width: 0;
-  }
-  .rss-item-title {
-    font-weight: 500;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .rss-item-title:hover { text-decoration: underline; }
-  .rss-item-description {
-    font-size: 0.875rem;
-    color: var(--color-on-offset, #666);
-    margin: 0.25rem 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .rss-item-meta {
-    font-size: 0.75rem;
-    color: var(--color-on-offset, #666);
-  }
-
-  /* Toggle switch */
-  .rss-toggle {
-    position: relative;
-    width: 40px;
-    height: 22px;
-    cursor: pointer;
-  }
-  .rss-toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  .rss-toggle-slider {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ccc;
-    border-radius: 22px;
-    transition: 0.3s;
-  }
-  .rss-toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    border-radius: 50%;
-    transition: 0.3s;
-  }
-  .rss-toggle input:checked + .rss-toggle-slider {
-    background-color: var(--color-accent, #ff6600);
-  }
-  .rss-toggle input:checked + .rss-toggle-slider:before {
-    transform: translateX(18px);
-  }
-
-  /* Delete button */
-  .rss-delete-btn {
-    background: none;
-    border: none;
-    color: #d32f2f;
-    cursor: pointer;
-    padding: 0.25rem;
-    font-size: 1rem;
-    opacity: 0.6;
-  }
-  .rss-delete-btn:hover { opacity: 1; }
-
-  /* Public link */
-  .rss-public-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-m, 1rem);
-    flex-wrap: wrap;
-  }
-  .rss-public-link p {
-    margin: 0;
-    color: var(--color-on-offset, #666);
-    font: var(--font-caption, 0.875rem/1.4 sans-serif);
-  }
-</style>
-
-{# Notifications #}
-{% if synced %}
-<div class="rss-notification rss-notification--success">
-  {% if syncedItems and syncedItems != "0" %}
-    Synced {{ syncedItems }} new items from {{ syncedFeeds }} feeds
-  {% else %}
-    Feeds are up to date, nothing new to sync
-  {% endif %}
-  {% if syncedPruned and syncedPruned != "0" %}
-    ({{ syncedPruned }} old items pruned)
-  {% endif %}
-</div>
-{% endif %}
-
-{% if syncInProgress %}
-<div class="rss-notification rss-notification--warning">
-  A sync is already in progress, please wait
-</div>
-{% endif %}
-
-{% if queryError %}
-<div class="rss-notification rss-notification--error">
-  {{ queryError }}
-</div>
-{% endif %}
-
-{% if configError %}
-<div class="rss-notification rss-notification--error">
-  {{ configError }}
-</div>
-{% endif %}
-
-<div class="rss-dashboard">
+{% block rss %}
   {% if not configError %}
     {# Sync Status & Actions #}
-    <section class="rss-section">
-      <h2>{{ __("rss.syncStatus") }}</h2>
+    {% call section({ title: __("rss.syncStatus") }) %}
       <div class="rss-sync-bar">
         <div class="rss-sync-info">
           <span class="rss-sync-label">{{ __("rss.lastSynced") }}</span>
@@ -362,41 +25,44 @@
         </div>
         <div class="button-group" style="display: flex; gap: 0.5rem;">
           <form action="{{ mountPath }}/sync" method="post" style="display: inline;">
-            <button type="submit" class="button button--primary" {% if syncState.syncing %}disabled{% endif %}>
-              {{ __("rss.syncNow") }}
-            </button>
+            {{ button({
+              type: "submit",
+              text: __("rss.syncNow"),
+              disabled: syncState.syncing
+            }) }}
           </form>
           <form action="{{ mountPath }}/clear-resync" method="post" style="display: inline;" id="clear-resync-form">
-            <button type="submit" class="button" {% if syncState.syncing %}disabled{% endif %}>
-              {{ __("rss.clearResync") }}
-            </button>
+            {{ button({
+              classes: "button--secondary",
+              type: "submit",
+              text: __("rss.clearResync"),
+              disabled: syncState.syncing
+            }) }}
           </form>
         </div>
       </div>
-    </section>
+    {% endcall %}
 
     {# Stats #}
-    <section class="rss-section">
-      <h2>{{ __("rss.status") }}</h2>
-      <div class="rss-stats-grid">
+    {% call section({ title: __("rss.status") }) %}
+      <div class="rss-stats">
         <div class="rss-stat">
-          <span class="rss-stat-value">{{ totalFeeds }}</span>
-          <span class="rss-stat-label">{{ __("rss.feedsCount") }}</span>
+          <span class="rss-stat__value">{{ totalFeeds }}</span>
+          <span class="rss-stat__label">{{ __("rss.feedsCount") }}</span>
         </div>
         <div class="rss-stat">
-          <span class="rss-stat-value">{{ totalItems }}</span>
-          <span class="rss-stat-label">{{ __("rss.itemsCount") }}</span>
+          <span class="rss-stat__value">{{ totalItems }}</span>
+          <span class="rss-stat__label">{{ __("rss.itemsCount") }}</span>
         </div>
         <div class="rss-stat">
-          <span class="rss-stat-value">{{ feeds | selectattr("enabled") | list | length }}</span>
-          <span class="rss-stat-label">{{ __("rss.enabled") }}</span>
+          <span class="rss-stat__value">{{ feeds | selectattr("enabled") | list | length }}</span>
+          <span class="rss-stat__label">{{ __("rss.enabled") }}</span>
         </div>
       </div>
-    </section>
+    {% endcall %}
 
     {# Add Feed Form #}
-    <section class="rss-section">
-      <h2>{{ __("rss.addFeed") }}</h2>
+    {% call section({ title: __("rss.addFeed") }) %}
       <form class="rss-add-form" action="{{ mountPath }}/api/feeds" method="post" id="add-feed-form">
         <input
           type="url"
@@ -404,16 +70,16 @@
           placeholder="{{ __("rss.feedUrlPlaceholder") }}"
           required
         >
-        <button type="submit" class="button button--primary">
-          {{ __("rss.addFeed") }}
-        </button>
+        {{ button({
+          type: "submit",
+          text: __("rss.addFeed")
+        }) }}
       </form>
-    </section>
+    {% endcall %}
 
     {# Feeds List #}
     {% if feeds and feeds.length > 0 %}
-    <section class="rss-section">
-      <h2>{{ __("rss.feeds") }}</h2>
+    {% call section({ title: __("rss.feeds") }) %}
       <ul class="rss-feed-list">
         {% for feed in feeds %}
         <li class="rss-feed-item" data-feed-id="{{ feed.id }}">
@@ -453,13 +119,12 @@
         </li>
         {% endfor %}
       </ul>
-    </section>
+    {% endcall %}
     {% endif %}
 
     {# Recent Items #}
     {% if recentItems and recentItems.length > 0 %}
-    <section class="rss-section">
-      <h2>{{ __("rss.recentItems") }}</h2>
+    {% call section({ title: __("rss.recentItems") }) %}
       <ul class="rss-item-list">
         {% for item in recentItems %}
         <li class="rss-item">
@@ -485,20 +150,22 @@
         </li>
         {% endfor %}
       </ul>
-    </section>
+    {% endcall %}
     {% endif %}
 
     {# Public Page Link #}
-    <section class="rss-section">
+    {% call section({ title: __("rss.widget.title") if __("rss.widget.title") else "Public page" }) %}
       <div class="rss-public-link">
         <p>{{ __("rss.widget.description") }}</p>
-        <a href="/news/" class="button button--secondary" target="_blank">
-          {{ __("rss.widget.view") }}
-        </a>
+        {{ button({
+          classes: "button--secondary",
+          href: "/news/",
+          text: __("rss.widget.view"),
+          target: "_blank"
+        }) }}
       </div>
-    </section>
+    {% endcall %}
   {% endif %}
-</div>
 
 <script>
   // Handle add feed form

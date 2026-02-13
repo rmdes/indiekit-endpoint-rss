@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "RSS रीडर",
+    "feeds": "फ़ीड",
+    "items": "फ़ीड आइटम",
+    "addFeed": "फ़ीड जोड़ें",
+    "removeFeed": "फ़ीड हटाएं",
+    "enableFeed": "सक्षम करें",
+    "disableFeed": "अक्षम करें",
+    "syncNow": "अभी सिंक करें",
+    "clearResync": "साफ़ करें और फिर से सिंक करें",
+    "syncing": "सिंक हो रहा है...",
+    "lastSynced": "अंतिम सिंक",
+    "noFeeds": "कोई फ़ीड कॉन्फ़िगर नहीं है। शुरू करने के लिए एक फ़ीड URL जोड़ें।",
+    "noItems": "कोई आइटम नहीं मिला।",
+    "feedUrl": "फ़ीड URL",
+    "feedUrlPlaceholder": "https://example.com/feed.xml",
+    "recentItems": "हाल के आइटम",
+    "viewAll": "सभी देखें",
+    "enabled": "सक्षम",
+    "disabled": "अक्षम",
+    "itemCount": "आइटम",
+    "actions": "क्रियाएं",
+    "status": "स्थिति",
+    "syncStatus": "सिंक स्थिति",
+    "feedsCount": "कुल फ़ीड",
+    "itemsCount": "कुल आइटम",
+    "lastSync": "अंतिम सिंक",
+    "nextSync": "अगला सिंक",
+    "never": "कभी नहीं",
+    "error": {
+      "invalidUrl": "कृपया एक मान्य फ़ीड URL दर्ज करें",
+      "feedExists": "यह फ़ीड पहले से जोड़ा गया है",
+      "feedNotFound": "फ़ीड नहीं मिला",
+      "fetchFailed": "फ़ीड लाने में विफल",
+      "noConfig": "RSS एंडपॉइंट सही तरीके से कॉन्फ़िगर नहीं है",
+      "noDatabase": "डेटाबेस उपलब्ध नहीं है"
+    },
+    "success": {
+      "feedAdded": "फ़ीड सफलतापूर्वक जोड़ा गया",
+      "feedRemoved": "फ़ीड हटाया गया",
+      "feedEnabled": "फ़ीड सक्षम किया गया",
+      "feedDisabled": "फ़ीड अक्षम किया गया",
+      "syncComplete": "सिंक पूर्ण",
+      "clearResync": "आइटम साफ़ किए गए और फिर से सिंक किए गए"
+    },
+    "widget": {
+      "description": "सार्वजनिक पृष्ठ पर समेकित RSS फ़ीड देखें",
+      "view": "समाचार पृष्ठ देखें"
+    }
+  }
+}

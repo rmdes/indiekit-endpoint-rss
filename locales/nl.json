@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "RSS-lezer",
+    "feeds": "Feeds",
+    "items": "Feed-items",
+    "addFeed": "Feed toevoegen",
+    "removeFeed": "Feed verwijderen",
+    "enableFeed": "Inschakelen",
+    "disableFeed": "Uitschakelen",
+    "syncNow": "Nu synchroniseren",
+    "clearResync": "Wissen en opnieuw synchroniseren",
+    "syncing": "Synchroniseren...",
+    "lastSynced": "Laatst gesynchroniseerd",
+    "noFeeds": "Geen feeds geconfigureerd. Voeg een feed-URL toe om te beginnen.",
+    "noItems": "Geen items gevonden.",
+    "feedUrl": "Feed-URL",
+    "feedUrlPlaceholder": "https://voorbeeld.nl/feed.xml",
+    "recentItems": "Recente items",
+    "viewAll": "Alles bekijken",
+    "enabled": "Ingeschakeld",
+    "disabled": "Uitgeschakeld",
+    "itemCount": "items",
+    "actions": "Acties",
+    "status": "Status",
+    "syncStatus": "Synchronisatiestatus",
+    "feedsCount": "Totaal aantal feeds",
+    "itemsCount": "Totaal aantal items",
+    "lastSync": "Laatste synchronisatie",
+    "nextSync": "Volgende synchronisatie",
+    "never": "Nooit",
+    "error": {
+      "invalidUrl": "Voer een geldige feed-URL in",
+      "feedExists": "Deze feed is al toegevoegd",
+      "feedNotFound": "Feed niet gevonden",
+      "fetchFailed": "Ophalen van feed mislukt",
+      "noConfig": "RSS-endpoint niet correct geconfigureerd",
+      "noDatabase": "Database niet beschikbaar"
+    },
+    "success": {
+      "feedAdded": "Feed succesvol toegevoegd",
+      "feedRemoved": "Feed verwijderd",
+      "feedEnabled": "Feed ingeschakeld",
+      "feedDisabled": "Feed uitgeschakeld",
+      "syncComplete": "Synchronisatie voltooid",
+      "clearResync": "Items gewist en opnieuw gesynchroniseerd"
+    },
+    "widget": {
+      "description": "Bekijk geaggregeerde RSS-feeds op de openbare pagina",
+      "view": "Bekijk nieuwspagina"
+    }
+  }
+}

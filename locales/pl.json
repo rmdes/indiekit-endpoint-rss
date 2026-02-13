@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "Czytnik RSS",
+    "feeds": "Kanały",
+    "items": "Elementy kanałów",
+    "addFeed": "Dodaj kanał",
+    "removeFeed": "Usuń kanał",
+    "enableFeed": "Włącz",
+    "disableFeed": "Wyłącz",
+    "syncNow": "Synchronizuj teraz",
+    "clearResync": "Wyczyść i zsynchronizuj ponownie",
+    "syncing": "Synchronizacja...",
+    "lastSynced": "Ostatnia synchronizacja",
+    "noFeeds": "Brak skonfigurowanych kanałów. Dodaj adres URL kanału, aby rozpocząć.",
+    "noItems": "Nie znaleziono elementów.",
+    "feedUrl": "Adres URL kanału",
+    "feedUrlPlaceholder": "https://przyklad.pl/feed.xml",
+    "recentItems": "Ostatnie elementy",
+    "viewAll": "Pokaż wszystkie",
+    "enabled": "Włączony",
+    "disabled": "Wyłączony",
+    "itemCount": "elementów",
+    "actions": "Działania",
+    "status": "Status",
+    "syncStatus": "Status synchronizacji",
+    "feedsCount": "Łącznie kanałów",
+    "itemsCount": "Łącznie elementów",
+    "lastSync": "Ostatnia synchronizacja",
+    "nextSync": "Następna synchronizacja",
+    "never": "Nigdy",
+    "error": {
+      "invalidUrl": "Wprowadź prawidłowy adres URL kanału",
+      "feedExists": "Ten kanał został już dodany",
+      "feedNotFound": "Nie znaleziono kanału",
+      "fetchFailed": "Nie udało się pobrać kanału",
+      "noConfig": "Endpoint RSS nie jest poprawnie skonfigurowany",
+      "noDatabase": "Baza danych niedostępna"
+    },
+    "success": {
+      "feedAdded": "Kanał dodany pomyślnie",
+      "feedRemoved": "Kanał usunięty",
+      "feedEnabled": "Kanał włączony",
+      "feedDisabled": "Kanał wyłączony",
+      "syncComplete": "Synchronizacja zakończona",
+      "clearResync": "Elementy wyczyszczone i zsynchronizowane ponownie"
+    },
+    "widget": {
+      "description": "Wyświetl zagregowane kanały RSS na stronie publicznej",
+      "view": "Zobacz stronę aktualności"
+    }
+  }
+}

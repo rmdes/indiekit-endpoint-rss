@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "Lecteur RSS",
+    "feeds": "Flux",
+    "items": "Articles de flux",
+    "addFeed": "Ajouter un flux",
+    "removeFeed": "Supprimer le flux",
+    "enableFeed": "Activer",
+    "disableFeed": "Désactiver",
+    "syncNow": "Synchroniser maintenant",
+    "clearResync": "Effacer et resynchroniser",
+    "syncing": "Synchronisation...",
+    "lastSynced": "Dernière synchronisation",
+    "noFeeds": "Aucun flux configuré. Ajoutez une URL de flux pour commencer.",
+    "noItems": "Aucun article trouvé.",
+    "feedUrl": "URL du flux",
+    "feedUrlPlaceholder": "https://exemple.com/feed.xml",
+    "recentItems": "Articles récents",
+    "viewAll": "Voir tout",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "itemCount": "articles",
+    "actions": "Actions",
+    "status": "Statut",
+    "syncStatus": "État de synchronisation",
+    "feedsCount": "Total des flux",
+    "itemsCount": "Total des articles",
+    "lastSync": "Dernière synchronisation",
+    "nextSync": "Prochaine synchronisation",
+    "never": "Jamais",
+    "error": {
+      "invalidUrl": "Veuillez saisir une URL de flux valide",
+      "feedExists": "Ce flux a déjà été ajouté",
+      "feedNotFound": "Flux introuvable",
+      "fetchFailed": "Échec de récupération du flux",
+      "noConfig": "Le point de terminaison RSS n'est pas configuré correctement",
+      "noDatabase": "Base de données non disponible"
+    },
+    "success": {
+      "feedAdded": "Flux ajouté avec succès",
+      "feedRemoved": "Flux supprimé",
+      "feedEnabled": "Flux activé",
+      "feedDisabled": "Flux désactivé",
+      "syncComplete": "Synchronisation terminée",
+      "clearResync": "Articles effacés et resynchronisés"
+    },
+    "widget": {
+      "description": "Voir les flux RSS agrégés sur la page publique",
+      "view": "Voir la page d'actualités"
+    }
+  }
+}

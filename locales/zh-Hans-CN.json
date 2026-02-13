@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "RSS 阅读器",
+    "feeds": "订阅源",
+    "items": "订阅项目",
+    "addFeed": "添加订阅源",
+    "removeFeed": "删除订阅源",
+    "enableFeed": "启用",
+    "disableFeed": "禁用",
+    "syncNow": "立即同步",
+    "clearResync": "清除并重新同步",
+    "syncing": "同步中...",
+    "lastSynced": "上次同步",
+    "noFeeds": "未配置订阅源。添加订阅源 URL 以开始使用。",
+    "noItems": "未找到任何项目。",
+    "feedUrl": "订阅源 URL",
+    "feedUrlPlaceholder": "https://example.com/feed.xml",
+    "recentItems": "最近项目",
+    "viewAll": "查看全部",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "itemCount": "项",
+    "actions": "操作",
+    "status": "状态",
+    "syncStatus": "同步状态",
+    "feedsCount": "订阅源总数",
+    "itemsCount": "项目总数",
+    "lastSync": "上次同步",
+    "nextSync": "下次同步",
+    "never": "从未",
+    "error": {
+      "invalidUrl": "请输入有效的订阅源 URL",
+      "feedExists": "此订阅源已添加",
+      "feedNotFound": "未找到订阅源",
+      "fetchFailed": "获取订阅源失败",
+      "noConfig": "RSS 端点未正确配置",
+      "noDatabase": "数据库不可用"
+    },
+    "success": {
+      "feedAdded": "订阅源添加成功",
+      "feedRemoved": "订阅源已删除",
+      "feedEnabled": "订阅源已启用",
+      "feedDisabled": "订阅源已禁用",
+      "syncComplete": "同步完成",
+      "clearResync": "项目已清除并重新同步"
+    },
+    "widget": {
+      "description": "在公共页面上查看聚合的 RSS 订阅源",
+      "view": "查看新闻页面"
+    }
+  }
+}

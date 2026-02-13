@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "Pembaca RSS",
+    "feeds": "Umpan",
+    "items": "Item Umpan",
+    "addFeed": "Tambah Umpan",
+    "removeFeed": "Hapus Umpan",
+    "enableFeed": "Aktifkan",
+    "disableFeed": "Nonaktifkan",
+    "syncNow": "Sinkronkan Sekarang",
+    "clearResync": "Hapus & Sinkronkan Ulang",
+    "syncing": "Menyinkronkan...",
+    "lastSynced": "Terakhir disinkronkan",
+    "noFeeds": "Tidak ada umpan yang dikonfigurasi. Tambahkan URL umpan untuk memulai.",
+    "noItems": "Tidak ada item ditemukan.",
+    "feedUrl": "URL Umpan",
+    "feedUrlPlaceholder": "https://contoh.com/feed.xml",
+    "recentItems": "Item Terbaru",
+    "viewAll": "Lihat Semua",
+    "enabled": "Aktif",
+    "disabled": "Nonaktif",
+    "itemCount": "item",
+    "actions": "Tindakan",
+    "status": "Status",
+    "syncStatus": "Status Sinkronisasi",
+    "feedsCount": "Total Umpan",
+    "itemsCount": "Total Item",
+    "lastSync": "Sinkronisasi Terakhir",
+    "nextSync": "Sinkronisasi Berikutnya",
+    "never": "Tidak Pernah",
+    "error": {
+      "invalidUrl": "Masukkan URL umpan yang valid",
+      "feedExists": "Umpan ini sudah ditambahkan",
+      "feedNotFound": "Umpan tidak ditemukan",
+      "fetchFailed": "Gagal mengambil umpan",
+      "noConfig": "Endpoint RSS tidak dikonfigurasi dengan benar",
+      "noDatabase": "Basis data tidak tersedia"
+    },
+    "success": {
+      "feedAdded": "Umpan berhasil ditambahkan",
+      "feedRemoved": "Umpan dihapus",
+      "feedEnabled": "Umpan diaktifkan",
+      "feedDisabled": "Umpan dinonaktifkan",
+      "syncComplete": "Sinkronisasi selesai",
+      "clearResync": "Item dihapus dan disinkronkan ulang"
+    },
+    "widget": {
+      "description": "Lihat umpan RSS terkumpul di halaman publik",
+      "view": "Lihat Halaman Berita"
+    }
+  }
+}

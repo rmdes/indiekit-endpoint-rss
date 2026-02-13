@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "Lector RSS",
+    "feeds": "Fuentes",
+    "items": "Elementos de fuentes",
+    "addFeed": "Agregar fuente",
+    "removeFeed": "Quitar fuente",
+    "enableFeed": "Habilitar",
+    "disableFeed": "Deshabilitar",
+    "syncNow": "Sincronizar ahora",
+    "clearResync": "Limpiar y resincronizar",
+    "syncing": "Sincronizando...",
+    "lastSynced": "Última sincronización",
+    "noFeeds": "No hay fuentes configuradas. Agregá una URL de fuente para comenzar.",
+    "noItems": "No se encontraron elementos.",
+    "feedUrl": "URL de la fuente",
+    "feedUrlPlaceholder": "https://ejemplo.com/feed.xml",
+    "recentItems": "Elementos recientes",
+    "viewAll": "Ver todos",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+    "itemCount": "elementos",
+    "actions": "Acciones",
+    "status": "Estado",
+    "syncStatus": "Estado de sincronización",
+    "feedsCount": "Total de fuentes",
+    "itemsCount": "Total de elementos",
+    "lastSync": "Última sincronización",
+    "nextSync": "Próxima sincronización",
+    "never": "Nunca",
+    "error": {
+      "invalidUrl": "Por favor ingresá una URL de fuente válida",
+      "feedExists": "Esta fuente ya fue agregada",
+      "feedNotFound": "Fuente no encontrada",
+      "fetchFailed": "Error al obtener la fuente",
+      "noConfig": "El endpoint RSS no está configurado correctamente",
+      "noDatabase": "Base de datos no disponible"
+    },
+    "success": {
+      "feedAdded": "Fuente agregada exitosamente",
+      "feedRemoved": "Fuente quitada",
+      "feedEnabled": "Fuente habilitada",
+      "feedDisabled": "Fuente deshabilitada",
+      "syncComplete": "Sincronización completa",
+      "clearResync": "Elementos limpiados y resincronizados"
+    },
+    "widget": {
+      "description": "Ver fuentes RSS agregadas en la página pública",
+      "view": "Ver página de noticias"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "Lettore RSS",
+    "feeds": "Feed",
+    "items": "Elementi del feed",
+    "addFeed": "Aggiungi feed",
+    "removeFeed": "Rimuovi feed",
+    "enableFeed": "Abilita",
+    "disableFeed": "Disabilita",
+    "syncNow": "Sincronizza ora",
+    "clearResync": "Cancella e risincronizza",
+    "syncing": "Sincronizzazione...",
+    "lastSynced": "Ultima sincronizzazione",
+    "noFeeds": "Nessun feed configurato. Aggiungi un URL feed per iniziare.",
+    "noItems": "Nessun elemento trovato.",
+    "feedUrl": "URL del feed",
+    "feedUrlPlaceholder": "https://esempio.com/feed.xml",
+    "recentItems": "Elementi recenti",
+    "viewAll": "Visualizza tutto",
+    "enabled": "Abilitato",
+    "disabled": "Disabilitato",
+    "itemCount": "elementi",
+    "actions": "Azioni",
+    "status": "Stato",
+    "syncStatus": "Stato sincronizzazione",
+    "feedsCount": "Totale feed",
+    "itemsCount": "Totale elementi",
+    "lastSync": "Ultima sincronizzazione",
+    "nextSync": "Prossima sincronizzazione",
+    "never": "Mai",
+    "error": {
+      "invalidUrl": "Inserisci un URL feed valido",
+      "feedExists": "Questo feed è già stato aggiunto",
+      "feedNotFound": "Feed non trovato",
+      "fetchFailed": "Recupero del feed non riuscito",
+      "noConfig": "Endpoint RSS non configurato correttamente",
+      "noDatabase": "Database non disponibile"
+    },
+    "success": {
+      "feedAdded": "Feed aggiunto con successo",
+      "feedRemoved": "Feed rimosso",
+      "feedEnabled": "Feed abilitato",
+      "feedDisabled": "Feed disabilitato",
+      "syncComplete": "Sincronizzazione completata",
+      "clearResync": "Elementi cancellati e risincronizzati"
+    },
+    "widget": {
+      "description": "Visualizza i feed RSS aggregati sulla pagina pubblica",
+      "view": "Visualizza pagina notizie"
+    }
+  }
+}

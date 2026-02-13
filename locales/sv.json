@@ -1,0 +1,52 @@
+{
+  "rss": {
+    "title": "RSS-läsare",
+    "feeds": "Flöden",
+    "items": "Flödesobjekt",
+    "addFeed": "Lägg till flöde",
+    "removeFeed": "Ta bort flöde",
+    "enableFeed": "Aktivera",
+    "disableFeed": "Inaktivera",
+    "syncNow": "Synkronisera nu",
+    "clearResync": "Rensa och synkronisera om",
+    "syncing": "Synkroniserar...",
+    "lastSynced": "Senast synkroniserad",
+    "noFeeds": "Inga flöden konfigurerade. Lägg till en flödes-URL för att komma igång.",
+    "noItems": "Inga objekt hittades.",
+    "feedUrl": "Flödes-URL",
+    "feedUrlPlaceholder": "https://exempel.se/feed.xml",
+    "recentItems": "Senaste objekten",
+    "viewAll": "Visa alla",
+    "enabled": "Aktiverad",
+    "disabled": "Inaktiverad",
+    "itemCount": "objekt",
+    "actions": "Åtgärder",
+    "status": "Status",
+    "syncStatus": "Synkroniseringsstatus",
+    "feedsCount": "Totalt antal flöden",
+    "itemsCount": "Totalt antal objekt",
+    "lastSync": "Senaste synkronisering",
+    "nextSync": "Nästa synkronisering",
+    "never": "Aldrig",
+    "error": {
+      "invalidUrl": "Ange en giltig flödes-URL",
+      "feedExists": "Detta flöde har redan lagts till",
+      "feedNotFound": "Flödet hittades inte",
+      "fetchFailed": "Misslyckades med att hämta flöde",
+      "noConfig": "RSS-ändpunkten är inte korrekt konfigurerad",
+      "noDatabase": "Databasen är inte tillgänglig"
+    },
+    "success": {
+      "feedAdded": "Flödet har lagts till",
+      "feedRemoved": "Flödet har tagits bort",
+      "feedEnabled": "Flödet aktiverat",
+      "feedDisabled": "Flödet inaktiverat",
+      "syncComplete": "Synkronisering klar",
+      "clearResync": "Objekt rensade och omsynkroniserade"
+    },
+    "widget": {
+      "description": "Visa aggregerade RSS-flöden på den publika sidan",
+      "view": "Visa nyhetssida"
+    }
+  }
+}

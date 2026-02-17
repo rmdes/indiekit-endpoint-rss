@@ -45,6 +45,7 @@
       "clearResync": "项目已清除并重新同步"
     },
     "widget": {
+      "title": "Public Page",
       "description": "在公共页面上查看聚合的 RSS 订阅源",
       "view": "查看新闻页面"
     }

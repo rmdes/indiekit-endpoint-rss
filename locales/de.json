@@ -45,6 +45,7 @@
       "clearResync": "Einträge gelöscht und neu synchronisiert"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Aggregierte RSS-Feeds auf der öffentlichen Seite anzeigen",
       "view": "Nachrichtenseite anzeigen"
     }

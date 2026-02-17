@@ -45,6 +45,7 @@
       "clearResync": "Elementi cancellati e risincronizzati"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Visualizza i feed RSS aggregati sulla pagina pubblica",
       "view": "Visualizza pagina notizie"
     }

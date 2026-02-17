@@ -45,6 +45,7 @@
       "clearResync": "Articles effacés et resynchronisés"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Voir les flux RSS agrégés sur la page publique",
       "view": "Voir la page d'actualités"
     }

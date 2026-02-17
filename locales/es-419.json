@@ -45,6 +45,7 @@
       "clearResync": "Elementos limpiados y resincronizados"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Ver fuentes RSS agregadas en la página pública",
       "view": "Ver página de noticias"
     }

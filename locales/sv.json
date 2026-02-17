@@ -45,6 +45,7 @@
       "clearResync": "Objekt rensade och omsynkroniserade"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Visa aggregerade RSS-flöden på den publika sidan",
       "view": "Visa nyhetssida"
     }

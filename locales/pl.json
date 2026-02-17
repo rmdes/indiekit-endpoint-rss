@@ -45,6 +45,7 @@
       "clearResync": "Elementy wyczyszczone i zsynchronizowane ponownie"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Wyświetl zagregowane kanały RSS na stronie publicznej",
       "view": "Zobacz stronę aktualności"
     }

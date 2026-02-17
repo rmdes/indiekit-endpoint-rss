@@ -45,6 +45,7 @@
       "clearResync": "Items gewist en opnieuw gesynchroniseerd"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Bekijk geaggregeerde RSS-feeds op de openbare pagina",
       "view": "Bekijk nieuwspagina"
     }

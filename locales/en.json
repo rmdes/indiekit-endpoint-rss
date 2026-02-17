@@ -45,6 +45,7 @@
       "clearResync": "Items cleared and re-synced"
     },
     "widget": {
+      "title": "Public Page",
       "description": "View aggregated RSS feeds on the public page",
       "view": "View News Page"
     }

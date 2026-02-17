@@ -45,6 +45,7 @@
       "clearResync": "Item dihapus dan disinkronkan ulang"
     },
     "widget": {
+      "title": "Public Page",
       "description": "Lihat umpan RSS terkumpul di halaman publik",
       "view": "Lihat Halaman Berita"
     }

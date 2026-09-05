@@ -37,7 +37,8 @@ export default {
       fetchTimeout: 10_000,          // 10 second timeout per feed
       maxConcurrentFetches: 3,       // Parallel feed fetches
       retentionDays: 30,             // Days to keep items
-      minItemsPerFeed: 10            // Newest items always kept, whatever their age
+      minItemsPerFeed: 10,           // Newest items always kept, whatever their age
+      maxPostsPerCycle: 10           // Max posts created per sync cycle
     })
   ],
   // MongoDB database is REQUIRED

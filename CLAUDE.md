@@ -253,6 +253,61 @@ sort on it. Converting it needs a coordinated migration of every stored item, so
 it is left alone; `utils.js` `toISO()` normalizes it on the way out, which is why
 nothing ever reaches the Nunjucks `| date` filter as a Date.
 
+## Publishing feed items as posts
+
+A feed whose document carries a `publish` block creates Indiekit posts from its
+items. Absent, the feed behaves exactly as it always did — which is why enabling
+this on one feed cannot disturb the others.
+
+```js
+publish: {
+  enabled: false,
+  postType: "note",            // any post type enabled on THIS site
+  content: "{{description}}",  // template over the item
+  linkProperty: null,          // discovery property, pre-filled from postType
+  status: "draft",             // or "published"
+  syndicateTo: [],             // explicit target UIDs; empty means silent
+  declareSyndication: false,   // true adds syndication: [item.link]
+  since: null,                 // ISO watermark, stamped on first enable
+}
+```
+
+- `lib/jf2-builder.js` — pure: item + publish config to JF2 properties
+- `lib/publisher.js` — token minting, the Micropub POST, the bounded-retry loop,
+  and `resolvePublishContext`
+- The publish stage runs inside `runSync`, after insertion and before the prune
+
+Design and implementation notes:
+`documentation-central/plans/2026-09-05-rss-to-micropub-design.md`
+
+### Rules that are load-bearing
+
+Each of these was a real defect caught in review. Breaking one fails silently.
+
+1. **The post type is never sent.** `getPostType()` derives it from which
+   properties are present, so `publish.postType` only selects which discovery
+   property to set.
+2. **A note carries no `name`.** `post-type-discovery.js` ends with
+   `if (content && properties.name) return "article"`. A name reclassifies the post.
+3. **The wire format is mf2, not JF2.** `action.js` routes every JSON body through
+   `mf2ToJf2`, so `postToMicropub` converts with `jf2ToMf2` first — and passes a
+   shallow copy, because `jf2ToMf2` deletes `type` from the object it is given.
+4. **Feed values are untrusted.** `rss-client.js` stores raw feed markup;
+   `formatItem`'s sanitizing is on the API read path only. Every placeholder except
+   `{{link}}` goes through `stripHtml`, and `{{content}}` through `sanitizeHtml`,
+   which keeps `language-*` classes so Prism can still highlight code blocks.
+5. **`postedAt` is only ever an ISO string on success.** A null would make an item
+   immortal: `pruneOldItems` spares anything where the field exists.
+6. **A published item is never pruned.** A feed that re-serves an old item would
+   otherwise publish it a second time months later.
+7. **The watermark is the backlog guard.** `publish.since` is stamped once, on first
+   enable. Undated items are matched on `fetchedAt` instead, since a bare
+   `$gt` on a null `pubDate` would exclude them forever.
+8. **Background sync has no request**, so `resolvePublishContext` resolves a relative
+   `micropubEndpoint` against localhost — the same loopback `start.sh` uses for the
+   syndication poller. It returns `null` rather than throwing, because it runs
+   before `runSync`'s try block.
+
 ### FreshRSS Integration
 When fetching from FreshRSS (Google Reader API format):
 - Use `?f=json` or `?f=greader` in feed URL

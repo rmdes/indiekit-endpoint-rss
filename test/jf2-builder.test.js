@@ -173,3 +173,38 @@ test("defaults are offered per post type", () => {
   assert.equal(defaultContent("article"), "{{content}}");
   assert.equal(defaultContent("bookmark"), "{{description}}");
 });
+
+test("items sharing a title prefix get different slugs", () => {
+  // Indiekit slugs from the first five words of the name. Three GitHub
+  // timeline entries shared that prefix, resolved to one URL, and
+  // postData.create's replaceOne silently overwrote each previous post.
+  const base = { postType: "article", content: "{{description}}", linkProperty: null, status: "published" };
+  const titled = (guid, title) => ({ ...item, guid, title, link: `https://example.com/${guid}` });
+
+  const a = buildJf2(titled("g1", "getindiekit added rmdes to getindiekit/jekyll-starter"), base);
+  const b = buildJf2(titled("g2", "getindiekit added rmdes to getindiekit/hugo-starter"), base);
+
+  assert.notEqual(a["mp-slug"], b["mp-slug"]);
+  // Still readable: the leading words survive, a short guid hash follows.
+  assert.match(a["mp-slug"], /^getindiekit added rmdes to \S+ [\da-f]{6}$/);
+});
+
+test("the slug is stable for the same item", () => {
+  const base = { postType: "note", content: "{{description}}", linkProperty: null, status: "draft" };
+
+  assert.equal(buildJf2(item, base)["mp-slug"], buildJf2(item, base)["mp-slug"]);
+});
+
+test("an indented description does not become a code block", () => {
+  // Markdown reads an indented line as code. A GitHub entry rendered as
+  // <pre><code> for exactly this reason.
+  const indented = { ...item, description: "  getindiekit\n    added\n    rmdes\n" };
+  const jf2 = buildJf2(indented, {
+    postType: "note",
+    content: "{{description}}",
+    linkProperty: null,
+    status: "draft",
+  });
+
+  assert.equal(jf2.content, "getindiekit added rmdes");
+});

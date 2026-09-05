@@ -74,6 +74,19 @@ export default class RssEndpoint {
     // Clear items and re-sync
     router.post("/clear-resync", dashboardController.clearResync);
 
+    // Dashboard forms: plain POST and redirect, so results land in
+    // Indiekit's own notification banner rather than a browser alert.
+    router.post(
+      "/feeds/:id/settings",
+      express.urlencoded({ extended: false }),
+      dashboardController.saveFeedSettings,
+    );
+    router.post(
+      "/feeds/:id/backfill",
+      express.urlencoded({ extended: false }),
+      dashboardController.backfillFeed,
+    );
+
     // Feed management (protected - requires auth)
     router.post("/api/feeds", express.json(), feedsController.add);
     router.delete("/api/feeds/:id", feedsController.remove);

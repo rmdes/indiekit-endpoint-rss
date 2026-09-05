@@ -113,7 +113,7 @@
               classes: "rss-publish",
               summary: publishSummary
             }) %}
-              <form data-publish-feed="{{ feed.id }}">
+              <form action="{{ mountPath }}/feeds/{{ feed.id }}/settings" method="post">
                 {{ input({
                   id: "feed-url-" + feed.id,
                   name: "url",
@@ -182,7 +182,7 @@
               </form>
 
               {% if feed.publish.enabled %}
-              <form class="rss-backfill" data-backfill-feed="{{ feed.id }}">
+              <form class="rss-backfill" action="{{ mountPath }}/feeds/{{ feed.id }}/backfill" method="post">
                 {{ input({
                   id: "backfill-last-" + feed.id,
                   name: "last",
@@ -356,38 +356,6 @@
     }
   });
 
-  // Handle backfill
-  document.querySelectorAll('[data-backfill-feed]').forEach(form => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const feedId = e.target.dataset.backfillFeed;
-      const last = Number(new FormData(e.target).get('last'));
-
-      if (!last || last < 1) {
-        alert('Enter how many recent items to publish.');
-        return;
-      }
-
-      try {
-        const response = await fetch(`{{ mountPath }}/api/feeds/${feedId}/backfill`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ last })
-        });
-
-        const body = await response.json();
-        if (response.ok) {
-          alert(body.message || 'Backfill queued.');
-          location.reload();
-        } else {
-          alert(body.error || 'Failed to queue backfill');
-        }
-      } catch (err) {
-        alert('Failed to queue backfill: ' + err.message);
-      }
-    });
-  });
-
   // Handle delete feed
   document.querySelectorAll('[data-delete-feed]').forEach(btn => {
     btn.addEventListener('click', async (e) => {
@@ -412,51 +380,5 @@
     });
   });
 
-  // Handle publish configuration
-  document.querySelectorAll('[data-publish-feed]').forEach(form => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const feedId = e.target.dataset.publishFeed;
-      const data = new FormData(e.target);
-
-      const publish = {
-        // The checkboxes component sets value="true"; an unchecked box is
-        // omitted from FormData entirely, so presence is the signal.
-        enabled: data.get('enabled') !== null,
-        postType: data.get('postType'),
-        content: data.get('content'),
-        linkProperty: data.get('linkProperty') || null,
-        status: data.get('status'),
-      };
-
-      try {
-        const response = await fetch(`{{ mountPath }}/api/feeds/${feedId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: data.get('url'), publish })
-        });
-
-        const body = await response.json();
-
-        if (response.ok) {
-          // A feed can be correctly configured and still have nothing to
-          // publish: the watermark only lets through items dated after the
-          // moment publishing was switched on.
-          if (body.eligible === 0) {
-            alert(
-              'Saved. No items are waiting: only items published after you ' +
-              'enabled this will post. Use "Publish existing items" to ' +
-              'include the ones already cached.'
-            );
-          }
-          location.reload();
-        } else {
-          alert(body.error || 'Failed to save publish settings');
-        }
-      } catch (err) {
-        alert('Failed to save publish settings: ' + err.message);
-      }
-    });
-  });
 </script>
 {% endblock %}

@@ -413,7 +413,32 @@ test("pendingQuery honours the watermark on both dated and undated items", () =>
   // Two branches: a real date after the watermark, or no date at all falling
   // back to when the item entered the cache.
   assert.deepEqual(query.$or, [
-    { pubDate: { $gt: since } },
+    { pubDate: { $gt: new Date(since) } },
     { pubDate: null, fetchedAt: { $gt: since } },
   ]);
+});
+
+test("each operand matches the BSON type its field is stored as", () => {
+  // This is the check that would have caught the bug that shipped in 1.1.3.
+  // pubDate is a BSON Date (rss-client builds real Dates, pruneOldItems
+  // compares against one); fetchedAt is an ISO string like every other date
+  // here. MongoDB orders by type before value, so a Date is never $gt a
+  // String — passing the ISO string to pubDate matched nothing at all, with
+  // no error, no log and no item touched.
+  const query = pendingQuery({
+    _id: "a",
+    publish: { enabled: true, since: "2026-01-01T00:00:00.000Z" },
+  });
+
+  const [dated, undated] = query.$or;
+
+  assert.ok(
+    dated.pubDate.$gt instanceof Date,
+    "pubDate is a BSON Date, so its operand must be a Date",
+  );
+  assert.equal(
+    typeof undated.fetchedAt.$gt,
+    "string",
+    "fetchedAt is an ISO string, so its operand must be a string",
+  );
 });

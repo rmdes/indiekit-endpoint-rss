@@ -279,3 +279,39 @@ test("one failing item does not stop the rest of the batch", async () => {
   assert.equal(result.failed, 1);
   assert.equal(docs().filter((doc) => doc.postedAt).length, 2);
 });
+
+test("each item is posted with a freshly minted token", async () => {
+  const { collection } = makeItems(pending(3));
+  let minted = 0;
+
+  await publishPending(feed, collection, {
+    ...baseOptions,
+    mintImpl: () => {
+      minted += 1;
+      return `tok${minted}`;
+    },
+    postImpl: async () => "https://example.com/x",
+  });
+
+  // One token per item: a single batch token would expire partway through a
+  // slow batch, and the resulting 401s are 4xx, so the tail would be marked
+  // permanently skipped and silently lost.
+  assert.equal(minted, 3);
+});
+
+test("an empty feed never mints a token", async () => {
+  const { collection } = makeItems([]);
+  let minted = 0;
+
+  const result = await publishPending(feed, collection, {
+    ...baseOptions,
+    mintImpl: () => {
+      minted += 1;
+      return "tok";
+    },
+    postImpl: async () => "https://example.com/x",
+  });
+
+  assert.equal(result.published, 0);
+  assert.equal(minted, 0);
+});

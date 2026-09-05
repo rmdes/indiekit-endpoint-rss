@@ -517,3 +517,38 @@ test("the minted scope satisfies both actions we actually send", async () => {
   assert.ok(checkScope(scope, "create"), "must be able to create");
   assert.ok(checkScope(scope, "update"), "must be able to update");
 });
+
+test("posts are spaced out, and the batch does not end on a wait", async () => {
+  // Eleventy's watcher drops builds when files land faster than it settles
+  // them, so the gap is between posts — not after the last one, which would
+  // just delay the cycle for nothing.
+  const { collection } = makeItems(pending(3));
+  const waits = [];
+
+  await publishPending(feed, collection, {
+    ...baseOptions,
+    postIntervalMs: 5000,
+    sleepImpl: async (ms) => waits.push(ms),
+    postImpl: async () => "https://example.com/bookmarks/1",
+  });
+
+  assert.deepEqual(waits, [5000, 5000]);
+});
+
+test("a failed post still yields to the next one", async () => {
+  // The delay sits outside the try/catch: a burst of failures must not
+  // hammer the endpoint any faster than a burst of successes.
+  const { collection } = makeItems(pending(2));
+  const waits = [];
+
+  await publishPending(feed, collection, {
+    ...baseOptions,
+    postIntervalMs: 5000,
+    sleepImpl: async (ms) => waits.push(ms),
+    postImpl: async () => {
+      throw Object.assign(new Error("boom"), { status: 500 });
+    },
+  });
+
+  assert.deepEqual(waits, [5000]);
+});

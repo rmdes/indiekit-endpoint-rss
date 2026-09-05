@@ -20,6 +20,9 @@ const defaults = {
   retentionDays: 30,
   minItemsPerFeed: 10,
   maxPostsPerCycle: 10,
+  // Eleventy's watcher settles a new file in stabilityThreshold (2s) + watch
+  // throttle (3s); posting faster than that loses builds.
+  postIntervalMs: 5000,
 };
 
 export default class RssEndpoint {

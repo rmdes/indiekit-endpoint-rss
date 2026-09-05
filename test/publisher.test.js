@@ -442,3 +442,63 @@ test("each operand matches the BSON type its field is stored as", () => {
     "fetchedAt is an ISO string, so its operand must be a string",
   );
 });
+
+test("an existing post is updated, not created a second time", async () => {
+  // The file system store's createFile returns silently when the path exists,
+  // so a second create updates the database row and leaves the published file
+  // untouched. The two then disagree with nothing to show for it.
+  let sent;
+  const fakeFetch = async (url, options) => {
+    sent = JSON.parse(options.body);
+    return { ok: true, status: 200, headers: new Headers(), text: async () => "" };
+  };
+
+  await postToMicropub(
+    "http://localhost:8080/micropub",
+    "tok",
+    { type: "entry", content: "new" },
+    { fetchImpl: fakeFetch, replaces: "https://example.com/articles/1" },
+  );
+
+  assert.equal(sent.action, "update");
+  assert.equal(sent.url, "https://example.com/articles/1");
+  assert.deepEqual(sent.replace.content, ["new"]);
+});
+
+test("a first publish is still a plain create", async () => {
+  let sent;
+  const fakeFetch = async (url, options) => {
+    sent = JSON.parse(options.body);
+    return {
+      ok: true,
+      status: 201,
+      headers: new Headers({ location: "https://example.com/x" }),
+      text: async () => "",
+    };
+  };
+
+  await postToMicropub(
+    "http://localhost:8080/micropub",
+    "tok",
+    { type: "entry", content: "hi" },
+    { fetchImpl: fakeFetch },
+  );
+
+  assert.equal(sent.action, undefined);
+  assert.deepEqual(sent.type, ["h-entry"]);
+});
+
+test("republishing keeps the item's recorded url", async () => {
+  const { collection, docs } = makeItems([
+    { ...pending(1)[0], postUrl: "https://example.com/articles/1" },
+  ]);
+
+  await publishPending(feed, collection, {
+    ...baseOptions,
+    // An update returns no Location header; the known url must survive.
+    postImpl: async () => null,
+  });
+
+  assert.equal(docs()[0].postUrl, "https://example.com/articles/1");
+  assert.ok(docs()[0].postedAt);
+});

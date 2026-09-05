@@ -175,6 +175,25 @@
                   ]
                 }) }}
 
+                {{ select({
+                  id: "publish-date-source-" + feed.id,
+                  name: "dateSource",
+                  label: __("rss.publish.dateSource"),
+                  hint: __("rss.publish.dateSourceHint"),
+                  items: [
+                    {
+                      text: __("rss.publish.dateFromItem"),
+                      value: "item",
+                      selected: feed.publish.dateSource != "created"
+                    },
+                    {
+                      text: __("rss.publish.dateFromCreation"),
+                      value: "created",
+                      selected: feed.publish.dateSource == "created"
+                    }
+                  ]
+                }) }}
+
                 {{ button({
                   type: "submit",
                   text: __("rss.publish.save")
@@ -195,6 +214,15 @@
                   classes: "button--secondary",
                   type: "submit",
                   text: __("rss.backfill.submit")
+                }) }}
+              </form>
+
+              <form class="rss-republish" action="{{ mountPath }}/feeds/{{ feed.id }}/republish" method="post">
+                <p class="hint">{{ __("rss.republish.hint") }}</p>
+                {{ button({
+                  classes: "button--secondary",
+                  type: "submit",
+                  text: __("rss.republish.submit")
                 }) }}
               </form>
               {% endif %}

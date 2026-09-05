@@ -86,6 +86,11 @@ export default class RssEndpoint {
       express.urlencoded({ extended: false }),
       dashboardController.backfillFeed,
     );
+    router.post(
+      "/feeds/:id/republish",
+      express.urlencoded({ extended: false }),
+      dashboardController.republishFeed,
+    );
 
     // Feed management (protected - requires auth)
     router.post("/api/feeds", express.json(), feedsController.add);

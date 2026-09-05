@@ -208,3 +208,89 @@ test("an indented description does not become a code block", () => {
 
   assert.equal(jf2.content, "getindiekit added rmdes");
 });
+
+test("content keeps images and resolves feed-relative links", () => {
+  // A feed's markup is relative to the site that published it. Left as-is,
+  // every link and image would point at our own host instead.
+  const gh = {
+    ...item,
+    link: "https://github.com/getindiekit/jekyll-starter",
+    content:
+      '<div><a href="/rmdes"><img src="/avatars/1.png" alt="@rmdes"></a> added</div>',
+  };
+
+  const jf2 = buildJf2(gh, {
+    postType: "article",
+    content: "{{content}}",
+    linkProperty: null,
+    status: "published",
+  });
+
+  assert.match(jf2.content.html, /href="https:\/\/github\.com\/rmdes"/);
+  assert.match(jf2.content.html, /src="https:\/\/github\.com\/avatars\/1\.png"/);
+  assert.match(jf2.content.html, /<img/, "images are content, not decoration");
+});
+
+test("an anchor emptied by sanitizing is dropped", () => {
+  const gh = {
+    ...item,
+    link: "https://example.com/x",
+    content: '<a href="/u"><svg>icon</svg></a><p>text</p>',
+  };
+
+  const jf2 = buildJf2(gh, {
+    postType: "article",
+    content: "{{content}}",
+    linkProperty: null,
+    status: "published",
+  });
+
+  assert.doesNotMatch(jf2.content.html, /<a[^>]*><\/a>/);
+});
+
+test("cosmetic indentation goes, code-block indentation stays", () => {
+  // Micropub normalises HTML through markdown-it, where a four-space indent
+  // is a code block — pretty-printed feed markup came back fenced and
+  // escaped. Inside <pre> the indentation is the content.
+  const gh = {
+    ...item,
+    content: "<p>\n      one\n      two\n</p><pre><code>  indented\n  lines</code></pre>",
+  };
+
+  const jf2 = buildJf2(gh, {
+    postType: "article",
+    content: "{{content}}",
+    linkProperty: null,
+    status: "published",
+  });
+
+  assert.match(jf2.content.html, /<p> one two <\/p>/);
+  assert.match(jf2.content.html, /<code>  indented\n  lines<\/code>/);
+});
+
+test("the post carries the item's own date by default", () => {
+  const jf2 = buildJf2(item, {
+    postType: "note",
+    content: "{{description}}",
+    linkProperty: null,
+    status: "draft",
+  });
+
+  assert.equal(jf2.published, "2026-09-05T10:00:00.000Z");
+});
+
+test("dateSource created makes the post visible instead of accurate", () => {
+  // The item's own date is truthful but sorts the post into the past, where a
+  // feed of older items produces posts nobody ever sees.
+  const before = Date.now();
+  const jf2 = buildJf2(item, {
+    postType: "note",
+    content: "{{description}}",
+    linkProperty: null,
+    status: "draft",
+    dateSource: "created",
+  });
+
+  assert.ok(new Date(jf2.published).getTime() >= before);
+  assert.notEqual(jf2.published, "2026-09-05T10:00:00.000Z");
+});

@@ -62,7 +62,11 @@
       "status": "Post status",
       "draft": "Draft",
       "published": "Published",
-      "save": "Save settings"
+      "save": "Save settings",
+      "dateSource": "Post date",
+      "dateFromItem": "The item's own publication date",
+      "dateFromCreation": "When it was published here",
+      "dateSourceHint": "The item's own date is accurate but sorts the post into the past, where a feed of older items produces posts nobody sees."
     },
     "settings": {
       "title": "Feed settings",
@@ -73,6 +77,10 @@
       "label": "Publish existing items",
       "hint": "How many of the newest cached items to publish. They are created with this feed's post status, a few per sync cycle.",
       "submit": "Publish existing items"
+    },
+    "republish": {
+      "submit": "Forget and republish",
+      "hint": "Clears what this feed has published so the current settings apply to every item again. Existing posts are overwritten, not duplicated."
     }
   }
 }

@@ -101,39 +101,78 @@
             <div class="rss-feed-error">{{ feed.lastError }}</div>
             {% endif %}
           </div>
-          <details class="rss-publish">
-            <summary>{{ __("rss.publish.title") }}{% if feed.publish.enabled %} &bull; {{ feed.publish.postType }}{% endif %}</summary>
+          {% set typeItems = [] %}
+          {% for type in postTypes %}
+          {% set typeItems = (typeItems.push({
+            text: type,
+            value: type,
+            selected: feed.publish.postType == type
+          }), typeItems) %}
+          {% endfor %}
+          {% set publishSummary %}{{ __("rss.publish.title") }}{% if feed.publish.enabled %} &bull; {{ feed.publish.postType }}{% endif %}{% endset %}
+          {% call details({
+            classes: "rss-publish",
+            summary: publishSummary
+          }) %}
             <form data-publish-feed="{{ feed.id }}">
-              <label>
-                <input type="checkbox" name="enabled" {{ "checked" if feed.publish.enabled }}>
-                {{ __("rss.publish.enabled") }}
-              </label>
-              <label>
-                {{ __("rss.publish.postType") }}
-                <select name="postType">
-                  {% for type in postTypes %}
-                  <option value="{{ type }}" {{ "selected" if feed.publish.postType == type }}>{{ type }}</option>
-                  {% endfor %}
-                </select>
-              </label>
-              <label>
-                {{ __("rss.publish.content") }}
-                <input class="input" type="text" name="content" value="{{ feed.publish.content or '{{description}}' }}">
-              </label>
-              <label>
-                {{ __("rss.publish.linkProperty") }}
-                <input class="input" type="text" name="linkProperty" value="{{ feed.publish.linkProperty or '' }}">
-              </label>
-              <label>
-                {{ __("rss.publish.status") }}
-                <select name="status">
-                  <option value="draft" {{ "selected" if feed.publish.status != "published" }}>draft</option>
-                  <option value="published" {{ "selected" if feed.publish.status == "published" }}>published</option>
-                </select>
-              </label>
-              {{ button({ type: "submit", text: __("rss.publish.save") }) }}
+              {{ checkboxes({
+                idPrefix: "publish-enabled-" + feed.id,
+                name: "enabled",
+                items: [{
+                  value: "true",
+                  text: __("rss.publish.enabled"),
+                  checked: feed.publish.enabled
+                }]
+              }) }}
+
+              {{ select({
+                id: "publish-post-type-" + feed.id,
+                name: "postType",
+                label: __("rss.publish.postType"),
+                items: typeItems
+              }) }}
+
+              {{ input({
+                id: "publish-content-" + feed.id,
+                name: "content",
+                label: __("rss.publish.content"),
+                hint: __("rss.publish.contentHint"),
+                value: feed.publish.content or "{{description}}"
+              }) }}
+
+              {{ input({
+                id: "publish-link-property-" + feed.id,
+                name: "linkProperty",
+                label: __("rss.publish.linkProperty"),
+                hint: __("rss.publish.linkPropertyHint"),
+                optional: true,
+                value: feed.publish.linkProperty
+              }) }}
+
+              {{ select({
+                id: "publish-status-" + feed.id,
+                name: "status",
+                label: __("rss.publish.status"),
+                items: [
+                  {
+                    text: __("rss.publish.draft"),
+                    value: "draft",
+                    selected: feed.publish.status != "published"
+                  },
+                  {
+                    text: __("rss.publish.published"),
+                    value: "published",
+                    selected: feed.publish.status == "published"
+                  }
+                ]
+              }) }}
+
+              {{ button({
+                type: "submit",
+                text: __("rss.publish.save")
+              }) }}
             </form>
-          </details>
+          {% endcall %}
           <div class="rss-feed-actions">
             <label class="rss-toggle">
               <input
@@ -322,7 +361,9 @@
       const data = new FormData(e.target);
 
       const publish = {
-        enabled: data.get('enabled') === 'on',
+        // The checkboxes component sets value="true"; an unchecked box is
+        // omitted from FormData entirely, so presence is the signal.
+        enabled: data.get('enabled') !== null,
         postType: data.get('postType'),
         content: data.get('content'),
         linkProperty: data.get('linkProperty') || null,

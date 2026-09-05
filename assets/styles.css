@@ -86,8 +86,16 @@
   align-items: center;
   border-block-end: 1px solid var(--color-border);
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-s);
   padding: var(--space-s) 0;
+}
+
+/* The publish disclosure gets a row of its own. As a plain flex sibling of the
+   icon, info and actions it was squeezed into the same line and overlapped the
+   feed metadata. */
+.rss-publish {
+  flex-basis: 100%;
 }
 
 .rss-feed-item:last-child {

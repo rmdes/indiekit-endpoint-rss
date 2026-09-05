@@ -40,7 +40,7 @@
       "feedAdded": "Feed added successfully",
       "feedRemoved": "Feed removed",
       "feedUpdated": "Feed updated",
-    "feedEnabled": "Feed enabled",
+      "feedEnabled": "Feed enabled",
       "feedDisabled": "Feed disabled",
       "backfillQueued": "Backfill queued; items will be published as drafts over the next sync cycles",
       "syncComplete": "Sync complete",
@@ -56,8 +56,12 @@
       "enabled": "Create posts from this feed",
       "postType": "Post type",
       "content": "Content template",
+      "contentHint": "Placeholders: {{title}} {{link}} {{description}} {{content}} {{author}} {{sourceTitle}}",
       "linkProperty": "Link property",
+      "linkPropertyHint": "Discovery property carrying the item URL, e.g. bookmark-of. Leave empty for a plain note or article.",
       "status": "Post status",
+      "draft": "Draft",
+      "published": "Published",
       "save": "Save publish settings"
     }
   }

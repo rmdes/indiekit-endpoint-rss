@@ -1,6 +1,6 @@
 {
   "name": "@rmdes/indiekit-endpoint-rss",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "RSS feed reader endpoint for Indiekit. Aggregates multiple feeds, caches in MongoDB, displays on frontend.",
   "keywords": [
     "indiekit",
@@ -49,9 +49,6 @@
     "express": "^5.0.0",
     "rss-parser": "^3.13.0",
     "sanitize-html": "^2.13.0"
-  },
-  "peerDependencies": {
-    "@indiekit/indiekit": ">=1.0.0-beta.25"
   },
   "publishConfig": {
     "access": "public"

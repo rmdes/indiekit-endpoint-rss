@@ -149,6 +149,24 @@ test("a null description or numeric title never throws", () => {
   );
 });
 
+test("{{content}} keeps a code block's language class for syntax highlighting", () => {
+  const jf2 = buildJf2(
+    { ...item, content: '<pre><code class="language-js">const x = 1;</code></pre>' },
+    { postType: "article", content: "{{content}}", linkProperty: null, status: "published" },
+  );
+
+  assert.match(jf2.content.html, /class="language-js"/);
+});
+
+test("a non-language class on code is dropped", () => {
+  const jf2 = buildJf2(
+    { ...item, content: '<code class="evil-class">x</code>' },
+    { postType: "article", content: "{{content}}", linkProperty: null, status: "published" },
+  );
+
+  assert.doesNotMatch(jf2.content.html, /evil-class/);
+});
+
 test("defaults are offered per post type", () => {
   assert.equal(defaultLinkProperty("bookmark"), "bookmark-of");
   assert.equal(defaultLinkProperty("note"), null);

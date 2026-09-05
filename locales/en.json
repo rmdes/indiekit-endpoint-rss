@@ -39,7 +39,8 @@
     "success": {
       "feedAdded": "Feed added successfully",
       "feedRemoved": "Feed removed",
-      "feedEnabled": "Feed enabled",
+      "feedUpdated": "Feed updated",
+    "feedEnabled": "Feed enabled",
       "feedDisabled": "Feed disabled",
       "syncComplete": "Sync complete",
       "clearResync": "Items cleared and re-synced"

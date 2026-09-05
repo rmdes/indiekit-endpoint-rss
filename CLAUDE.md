@@ -62,7 +62,7 @@ Core background sync logic:
 - `runSync()` - Single sync cycle (fetch all enabled feeds, upsert items, prune old data)
 - `syncFeed()` - Sync a single feed (fetch, parse, upsert items, update metadata)
 - `createIndexes()` - Ensure MongoDB indexes on feeds and items
-- `pruneOldItems()` - Delete items older than `retentionDays` (default: 30)
+- `pruneOldItems()` - Delete items older than `retentionDays` (default: 30), except the newest `minItemsPerFeed` of each feed (default: 10)
 - `processFeedsWithLimit()` - Concurrency-limited feed processing (default: 3 concurrent)
 
 **Sync State:**
@@ -192,7 +192,8 @@ new RssEndpoint({
   maxItemsPerFeed: 50,           // Max items per feed to cache (default: 50)
   fetchTimeout: 10_000,          // Feed fetch timeout in ms (default: 10s)
   maxConcurrentFetches: 3,       // Concurrent feed fetches (default: 3)
-  retentionDays: 30              // Days to keep items (default: 30)
+  retentionDays: 30,             // Days to keep items (default: 30)
+  minItemsPerFeed: 10            // Newest items per feed kept regardless of age (default: 10)
 })
 ```
 
@@ -205,7 +206,9 @@ Feeds are managed via admin UI or JSON API:
 1. Add feed via `POST /rssapi/api/feeds` with `{ url: "https://..." }`
 2. Plugin validates URL, fetches metadata, stores in DB
 3. Background sync fetches new items every `syncInterval` ms
-4. Old items are pruned after `retentionDays` days
+4. Old items are pruned after `retentionDays` days, except the newest
+   `minItemsPerFeed` items of each feed. Without that floor a feed whose whole
+   backlog predates the cutoff is emptied and refetched on every sync.
 
 ## Inter-Plugin Relationships
 

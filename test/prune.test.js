@@ -39,7 +39,7 @@ function makeCollections(items) {
           case "$nin":
             return !operand.includes(value);
           case "$exists":
-            return (value !== null) === operand;
+            return (field in doc) === operand;
           default:
             throw new Error(`unsupported operator: ${operator}`);
         }
@@ -172,5 +172,23 @@ test("never prunes an item that has already been published", async () => {
     remaining().filter((doc) => doc.postedAt).length,
     1,
     "the published item must survive even outside the floor",
+  );
+});
+
+test("postedAt: null counts as existing, not absent", async () => {
+  // A field explicitly set to null still exists in MongoDB, so { $exists:
+  // false } must not match it. If a failure path ever records postedAt:
+  // null, this keeps such an item from being pruned as if it were untouched.
+  const { itemsCollection, feedsCollection, remaining } = makeCollections([
+    ...Array.from({ length: 12 }, () => ({ feedId: "a", pubDate: daysAgo(400) })),
+    { feedId: "a", pubDate: daysAgo(400), postedAt: null },
+  ]);
+
+  await pruneOldItems(itemsCollection, feedsCollection, 30, 10);
+
+  assert.equal(
+    remaining().some((doc) => "postedAt" in doc),
+    true,
+    "an item with postedAt: null must survive, same as one already published",
   );
 });

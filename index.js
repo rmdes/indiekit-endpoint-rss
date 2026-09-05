@@ -6,13 +6,10 @@ import { dashboardController } from "./lib/controllers/dashboard.js";
 import { feedsController } from "./lib/controllers/feeds.js";
 import { itemsController } from "./lib/controllers/items.js";
 import { statusController } from "./lib/controllers/status.js";
-import { startSync } from "./lib/sync.js";
+import { startSync, stopSync } from "./lib/sync.js";
 import { waitForReady } from "@rmdes/indiekit-startup-gate";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const protectedRouter = express.Router();
-const publicRouter = express.Router();
 
 const defaults = {
   mountPath: "/rssapi",
@@ -56,44 +53,60 @@ export default class RssEndpoint {
   /**
    * Protected routes (require authentication)
    * Admin dashboard and feed management (write operations)
+   *
+   * Built once per instance. Indiekit reads this getter twice while mounting
+   * (once to test it, once to pass it to router.use), so a router built on
+   * every read registers every handler twice.
+   * @returns {express.Router}
    */
   get routes() {
+    if (this._routes) return this._routes;
+
+    const router = express.Router();
+
     // Dashboard
-    protectedRouter.get("/", dashboardController.get);
+    router.get("/", dashboardController.get);
 
     // Manual sync trigger
-    protectedRouter.post("/sync", dashboardController.sync);
+    router.post("/sync", dashboardController.sync);
 
     // Clear items and re-sync
-    protectedRouter.post("/clear-resync", dashboardController.clearResync);
+    router.post("/clear-resync", dashboardController.clearResync);
 
     // Feed management (protected - requires auth)
-    protectedRouter.post("/api/feeds", express.json(), feedsController.add);
-    protectedRouter.delete("/api/feeds/:id", feedsController.remove);
-    protectedRouter.patch("/api/feeds/:id", express.json(), feedsController.toggle);
+    router.post("/api/feeds", express.json(), feedsController.add);
+    router.delete("/api/feeds/:id", feedsController.remove);
+    router.patch("/api/feeds/:id", express.json(), feedsController.toggle);
 
     // Manual refresh (protected)
-    protectedRouter.post("/api/refresh", statusController.refresh);
+    router.post("/api/refresh", statusController.refresh);
 
-    return protectedRouter;
+    this._routes = router;
+    return router;
   }
 
   /**
    * Public routes (no authentication required)
    * Read-only JSON API endpoints for frontend
+   * @returns {express.Router}
    */
   get routesPublic() {
+    if (this._routesPublic) return this._routesPublic;
+
+    const router = express.Router();
+
     // Feeds API (read-only)
-    publicRouter.get("/api/feeds", feedsController.list);
+    router.get("/api/feeds", feedsController.list);
 
     // Items API (read-only)
-    publicRouter.get("/api/items", itemsController.list);
-    publicRouter.get("/api/items/:id", itemsController.get);
+    router.get("/api/items", itemsController.list);
+    router.get("/api/items/:id", itemsController.get);
 
     // Status API (read-only)
-    publicRouter.get("/api/status", statusController.status);
+    router.get("/api/status", statusController.status);
 
-    return publicRouter;
+    this._routesPublic = router;
+    return router;
   }
 
   init(Indiekit) {
@@ -121,5 +134,6 @@ export default class RssEndpoint {
 
   destroy() {
     this._stopGate?.();
+    stopSync();
   }
 }

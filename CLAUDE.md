@@ -3,7 +3,7 @@
 ## Package Overview
 
 **Package:** `@rmdes/indiekit-endpoint-rss`
-**Version:** 1.0.11
+**Version:** see `package.json` (do not duplicate it here — it drifts)
 **Type:** Indiekit endpoint plugin
 **Purpose:** RSS/Atom/JSON feed aggregator with MongoDB caching and frontend display
 
@@ -50,11 +50,14 @@ Prune old items (older than retentionDays)
 
 ### index.js
 - Main plugin class `RssEndpoint`
-- Registers two routers: `routes` (protected) and `routesPublic` (public)
+- Registers two routers: `routes` (protected) and `routesPublic` (public), each
+  built once per instance and memoized — Indiekit reads both getters twice while
+  mounting, so a router built on every read registers every handler twice
 - Default mount path: `/rssapi`
 - Adds MongoDB collections: `rssFeeds`, `rssItems`
 - Stores config in `application.rssConfig` for controller access
-- Starts background sync via `startSync()`
+- Starts background sync via `startSync()`; `destroy()` calls `stopSync()`, which
+  clears both the recurring interval and the 10s initial-sync timeout
 
 ### lib/sync.js
 Core background sync logic:
@@ -62,6 +65,8 @@ Core background sync logic:
 - `runSync()` - Single sync cycle (fetch all enabled feeds, upsert items, prune old data)
 - `syncFeed()` - Sync a single feed (fetch, parse, upsert items, update metadata)
 - `createIndexes()` - Ensure MongoDB indexes on feeds and items
+- `normalizeLegacyFeedDates()` - Rewrite pre-1.0.17 `addedAt` Date values as ISO strings
+- `stopSync()` - Clear both the recurring interval and the initial-sync timeout
 - `pruneOldItems()` - Delete items older than `retentionDays` (default: 30), except the newest `minItemsPerFeed` of each feed (default: 10)
 - `processFeedsWithLimit()` - Concurrency-limited feed processing (default: 3 concurrent)
 
@@ -232,14 +237,21 @@ Feeds are managed via admin UI or JSON API:
 ## Known Gotchas
 
 ### Date Handling
-**CRITICAL:** Dates MUST be stored as ISO strings (`new Date().toISOString()`), NOT Date objects. This plugin stores dates correctly:
-- `addedAt: new Date()` in feeds.js line 88 should be `new Date().toISOString()`
+**CRITICAL:** Dates MUST be stored as ISO strings (`new Date().toISOString()`), NOT Date objects:
+- `addedAt: new Date().toISOString()` (fixed in 1.0.17)
 - `lastFetchedAt: new Date().toISOString()` (correct)
 - `fetchedAt: new Date().toISOString()` (correct)
 
-**BUG FIX NEEDED:** `feeds.js:88` stores `addedAt: new Date()` (Date object). Should be `.toISOString()`.
+Feeds added before 1.0.17 hold a BSON `Date` in `addedAt`. In BSON a Date sorts
+after every string, so a mixed collection buries newly added feeds at the bottom
+of `{ addedAt: -1 }`. `normalizeLegacyFeedDates()` runs at the top of every sync
+and rewrites them; it is a no-op once converted.
 
-The `utils.js` `toISO()` helper exists to handle old data but new data should use ISO strings from the start.
+**Exception — `pubDate` is deliberately still a BSON `Date`.** `pruneOldItems()`
+compares it with `$lt` against a Date, and both the dashboard and the items API
+sort on it. Converting it needs a coordinated migration of every stored item, so
+it is left alone; `utils.js` `toISO()` normalizes it on the way out, which is why
+nothing ever reaches the Nunjucks `| date` filter as a Date.
 
 ### FreshRSS Integration
 When fetching from FreshRSS (Google Reader API format):

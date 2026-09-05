@@ -16,7 +16,7 @@ test("mounting reads the routes getter twice without duplicating handlers", () =
   const [first, second] = readTwice(endpoint, "routes");
 
   assert.equal(first, second, "each read must return the same router");
-  assert.equal(first.stack.length, 7, "7 protected routes, registered once");
+  assert.equal(first.stack.length, 8, "8 protected routes, registered once");
 });
 
 test("public routes are registered once too", () => {

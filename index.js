@@ -78,6 +78,7 @@ export default class RssEndpoint {
     router.post("/api/feeds", express.json(), feedsController.add);
     router.delete("/api/feeds/:id", feedsController.remove);
     router.patch("/api/feeds/:id", express.json(), feedsController.toggle);
+    router.post("/api/feeds/:id/backfill", express.json(), feedsController.backfill);
 
     // Manual refresh (protected)
     router.post("/api/refresh", statusController.refresh);

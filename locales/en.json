@@ -42,6 +42,7 @@
       "feedUpdated": "Feed updated",
     "feedEnabled": "Feed enabled",
       "feedDisabled": "Feed disabled",
+      "backfillQueued": "Backfill queued; items will be published as drafts over the next sync cycles",
       "syncComplete": "Sync complete",
       "clearResync": "Items cleared and re-synced"
     },

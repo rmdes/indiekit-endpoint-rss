@@ -68,7 +68,7 @@ test("postToMicropub throws with status and body on failure", async () => {
   );
 });
 
-import { publishPending } from "../lib/publisher.js";
+import { publishPending, watermarkFor } from "../lib/publisher.js";
 
 /**
  * Fake items collection supporting the selection filter and $set/$inc updates.
@@ -93,6 +93,18 @@ function makeItems(items) {
                     return false;
                   if (query.pubDate?.$gt && !(doc.pubDate > query.pubDate.$gt))
                     return false;
+                  if (query.$or) {
+                    const matches = query.$or.some((clause) => {
+                      if (clause.pubDate === null) {
+                        return (
+                          (doc.pubDate === null || doc.pubDate === undefined) &&
+                          new Date(doc.fetchedAt) > new Date(clause.fetchedAt.$gt)
+                        );
+                      }
+                      return doc.pubDate > clause.pubDate.$gt;
+                    });
+                    if (!matches) return false;
+                  }
                   return true;
                 })
                 .slice(0, n),
@@ -299,6 +311,56 @@ test("each item is posted with a freshly minted token", async () => {
   assert.equal(minted, 3);
 });
 
+test("an item with no pubDate still publishes, using fetchedAt", async () => {
+  const since = new Date("2026-01-01T00:00:00.000Z");
+  const { collection, docs } = makeItems([
+    {
+      feedId: "a",
+      guid: "undated",
+      title: "Undated",
+      link: "https://example.com/undated",
+      description: "Summary",
+      pubDate: null,
+      fetchedAt: "2026-06-01T00:00:00.000Z",
+    },
+  ]);
+
+  const result = await publishPending(
+    { ...feed, publish: { ...feed.publish, since } },
+    collection,
+    { ...baseOptions, postImpl: async () => "https://example.com/x" },
+  );
+
+  assert.equal(result.published, 1);
+  assert.ok(docs()[0].postedAt);
+});
+
+test("an undated item fetched before the watermark is not published", async () => {
+  // The watermark must still hold for undated items, or enabling publishing
+  // would replay the whole undated backlog.
+  const since = new Date("2026-06-01T00:00:00.000Z");
+  const { collection, docs } = makeItems([
+    {
+      feedId: "a",
+      guid: "old",
+      title: "Old",
+      link: "https://example.com/old",
+      description: "Summary",
+      pubDate: null,
+      fetchedAt: "2026-01-01T00:00:00.000Z",
+    },
+  ]);
+
+  const result = await publishPending(
+    { ...feed, publish: { ...feed.publish, since } },
+    collection,
+    { ...baseOptions, postImpl: async () => "https://example.com/x" },
+  );
+
+  assert.equal(result.published, 0);
+  assert.equal(docs()[0].postedAt, undefined);
+});
+
 test("an empty feed never mints a token", async () => {
   const { collection } = makeItems([]);
   let minted = 0;
@@ -314,4 +376,22 @@ test("an empty feed never mints a token", async () => {
 
   assert.equal(result.published, 0);
   assert.equal(minted, 0);
+});
+
+test("backfill by date uses the given date", () => {
+  assert.equal(
+    watermarkFor({ since: "2026-01-01T00:00:00.000Z" }, null),
+    "2026-01-01T00:00:00.000Z",
+  );
+});
+
+test("backfill by count sits just below the Nth newest item", () => {
+  assert.equal(
+    watermarkFor({ last: 10 }, new Date("2026-06-01T00:00:00.000Z")),
+    "2026-05-31T23:59:59.999Z",
+  );
+});
+
+test("backfill needs one of the two", () => {
+  assert.throws(() => watermarkFor({}, null), /since or last/);
 });

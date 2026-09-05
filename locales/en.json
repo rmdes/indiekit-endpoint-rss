@@ -49,6 +49,15 @@
       "title": "Public Page",
       "description": "View aggregated RSS feeds on the public page",
       "view": "View News Page"
+    },
+    "publish": {
+      "title": "Publish to site",
+      "enabled": "Create posts from this feed",
+      "postType": "Post type",
+      "content": "Content template",
+      "linkProperty": "Link property",
+      "status": "Post status",
+      "save": "Save publish settings"
     }
   }
 }

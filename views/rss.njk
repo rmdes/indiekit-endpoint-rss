@@ -101,6 +101,39 @@
             <div class="rss-feed-error">{{ feed.lastError }}</div>
             {% endif %}
           </div>
+          <details class="rss-publish">
+            <summary>{{ __("rss.publish.title") }}{% if feed.publish.enabled %} &bull; {{ feed.publish.postType }}{% endif %}</summary>
+            <form data-publish-feed="{{ feed.id }}">
+              <label>
+                <input type="checkbox" name="enabled" {{ "checked" if feed.publish.enabled }}>
+                {{ __("rss.publish.enabled") }}
+              </label>
+              <label>
+                {{ __("rss.publish.postType") }}
+                <select name="postType">
+                  {% for type in postTypes %}
+                  <option value="{{ type }}" {{ "selected" if feed.publish.postType == type }}>{{ type }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <label>
+                {{ __("rss.publish.content") }}
+                <input class="input" type="text" name="content" value="{{ feed.publish.content or '{{description}}' }}">
+              </label>
+              <label>
+                {{ __("rss.publish.linkProperty") }}
+                <input class="input" type="text" name="linkProperty" value="{{ feed.publish.linkProperty or '' }}">
+              </label>
+              <label>
+                {{ __("rss.publish.status") }}
+                <select name="status">
+                  <option value="draft" {{ "selected" if feed.publish.status != "published" }}>draft</option>
+                  <option value="published" {{ "selected" if feed.publish.status == "published" }}>published</option>
+                </select>
+              </label>
+              {{ button({ type: "submit", text: __("rss.publish.save") }) }}
+            </form>
+          </details>
           <div class="rss-feed-actions">
             <label class="rss-toggle">
               <input
@@ -277,6 +310,40 @@
         }
       } catch (err) {
         alert('Failed to remove feed: ' + err.message);
+      }
+    });
+  });
+
+  // Handle publish configuration
+  document.querySelectorAll('[data-publish-feed]').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const feedId = e.target.dataset.publishFeed;
+      const data = new FormData(e.target);
+
+      const publish = {
+        enabled: data.get('enabled') === 'on',
+        postType: data.get('postType'),
+        content: data.get('content'),
+        linkProperty: data.get('linkProperty') || null,
+        status: data.get('status'),
+      };
+
+      try {
+        const response = await fetch(`{{ mountPath }}/api/feeds/${feedId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ publish })
+        });
+
+        if (response.ok) {
+          location.reload();
+        } else {
+          const body = await response.json();
+          alert(body.error || 'Failed to save publish settings');
+        }
+      } catch (err) {
+        alert('Failed to save publish settings: ' + err.message);
       }
     });
   });

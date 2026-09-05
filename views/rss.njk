@@ -180,6 +180,24 @@
                   text: __("rss.publish.save")
                 }) }}
               </form>
+
+              {% if feed.publish.enabled %}
+              <form class="rss-backfill" data-backfill-feed="{{ feed.id }}">
+                {{ input({
+                  id: "backfill-last-" + feed.id,
+                  name: "last",
+                  type: "number",
+                  label: __("rss.backfill.label"),
+                  hint: __("rss.backfill.hint"),
+                  value: "10"
+                }) }}
+                {{ button({
+                  classes: "button--secondary",
+                  type: "submit",
+                  text: __("rss.backfill.submit")
+                }) }}
+              </form>
+              {% endif %}
             {% endcall %}
           </div>
           <div class="rss-feed-actions">
@@ -338,6 +356,38 @@
     }
   });
 
+  // Handle backfill
+  document.querySelectorAll('[data-backfill-feed]').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const feedId = e.target.dataset.backfillFeed;
+      const last = Number(new FormData(e.target).get('last'));
+
+      if (!last || last < 1) {
+        alert('Enter how many recent items to publish.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`{{ mountPath }}/api/feeds/${feedId}/backfill`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ last })
+        });
+
+        const body = await response.json();
+        if (response.ok) {
+          alert(body.message || 'Backfill queued.');
+          location.reload();
+        } else {
+          alert(body.error || 'Failed to queue backfill');
+        }
+      } catch (err) {
+        alert('Failed to queue backfill: ' + err.message);
+      }
+    });
+  });
+
   // Handle delete feed
   document.querySelectorAll('[data-delete-feed]').forEach(btn => {
     btn.addEventListener('click', async (e) => {
@@ -386,10 +436,21 @@
           body: JSON.stringify({ url: data.get('url'), publish })
         });
 
+        const body = await response.json();
+
         if (response.ok) {
+          // A feed can be correctly configured and still have nothing to
+          // publish: the watermark only lets through items dated after the
+          // moment publishing was switched on.
+          if (body.eligible === 0) {
+            alert(
+              'Saved. No items are waiting: only items published after you ' +
+              'enabled this will post. Use "Publish existing items" to ' +
+              'include the ones already cached.'
+            );
+          }
           location.reload();
         } else {
-          const body = await response.json();
           alert(body.error || 'Failed to save publish settings');
         }
       } catch (err) {

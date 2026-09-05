@@ -68,6 +68,11 @@
       "title": "Feed settings",
       "url": "Feed URL",
       "urlHint": "Correcting this keeps the cached items; removing and re-adding the feed would lose them."
+    },
+    "backfill": {
+      "label": "Publish existing items",
+      "hint": "How many of the newest cached items to publish. They are created with this feed's post status, a few per sync cycle.",
+      "submit": "Publish existing items"
     }
   }
 }

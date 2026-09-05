@@ -395,3 +395,25 @@ test("backfill by count sits just below the Nth newest item", () => {
 test("backfill needs one of the two", () => {
   assert.throws(() => watermarkFor({}, null), /since or last/);
 });
+
+import { pendingQuery } from "../lib/publisher.js";
+
+test("pendingQuery excludes what has already been published or given up on", () => {
+  const query = pendingQuery({ _id: "a", publish: { enabled: true } });
+
+  assert.deepEqual(query.postedAt, { $exists: false });
+  assert.deepEqual(query.postSkipped, { $ne: true });
+  assert.equal(query.$or, undefined, "no watermark means no date filter");
+});
+
+test("pendingQuery honours the watermark on both dated and undated items", () => {
+  const since = "2026-01-01T00:00:00.000Z";
+  const query = pendingQuery({ _id: "a", publish: { enabled: true, since } });
+
+  // Two branches: a real date after the watermark, or no date at all falling
+  // back to when the item entered the cache.
+  assert.deepEqual(query.$or, [
+    { pubDate: { $gt: since } },
+    { pubDate: null, fetchedAt: { $gt: since } },
+  ]);
+});

@@ -11,7 +11,8 @@ test("mintToken signs a create-scoped token with the site secret", async () => {
   const claims = jwt.verify(token, "test-secret-value");
 
   assert.equal(claims.me, "https://example.com/");
-  assert.equal(claims.scope, "create");
+  // Republishing an existing post is an update, a distinct scope.
+  assert.equal(claims.scope, "create update");
 });
 
 test("mintToken refuses to run without a secret", () => {
@@ -501,4 +502,18 @@ test("republishing keeps the item's recorded url", async () => {
 
   assert.equal(docs()[0].postUrl, "https://example.com/articles/1");
   assert.ok(docs()[0].postedAt);
+});
+
+test("the minted scope satisfies both actions we actually send", async () => {
+  // Asserted against Indiekit's own checkScope rather than a string chosen
+  // here: a create-only token returned 403 insufficient_scope on every
+  // republish, because an existing post is updated, not created.
+  process.env.SECRET = "test-secret-value";
+
+  const { checkScope } = await import("@indiekit/endpoint-micropub/lib/scope.js");
+  const jwt = (await import("jsonwebtoken")).default;
+  const { scope } = jwt.verify(mintToken("https://example.com/"), "test-secret-value");
+
+  assert.ok(checkScope(scope, "create"), "must be able to create");
+  assert.ok(checkScope(scope, "update"), "must be able to update");
 });

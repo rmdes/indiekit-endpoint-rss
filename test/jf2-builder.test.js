@@ -108,6 +108,47 @@ test("published is an ISO string, never a Date", () => {
   assert.equal(jf2.published, "2026-09-05T10:00:00.000Z");
 });
 
+test("description carrying a script tag is stripped, not passed through", () => {
+  const jf2 = buildJf2(
+    { ...item, description: "<script>alert(1)</script>evil text" },
+    { postType: "note", content: "{{description}}", linkProperty: null, status: "draft" },
+  );
+
+  assert.doesNotMatch(jf2.content, /script/);
+  assert.doesNotMatch(jf2.content, /</);
+});
+
+test("title with a break-out payload cannot inject markup into name", () => {
+  const jf2 = buildJf2(
+    { ...item, title: "before</script><img src=x onerror=alert(1)>after" },
+    { postType: "bookmark", content: "{{description}}", linkProperty: "bookmark-of", status: "draft" },
+  );
+
+  assert.equal(jf2.name, "beforeafter");
+});
+
+test("{{content}} still yields sanitized html, not stripped text", () => {
+  const jf2 = buildJf2(item, {
+    postType: "article",
+    content: "{{content}}",
+    linkProperty: null,
+    status: "published",
+  });
+
+  assert.equal(typeof jf2.content, "object");
+  assert.match(jf2.content.html, /<p>Full body<\/p>/);
+  assert.doesNotMatch(jf2.content.html, /script/);
+});
+
+test("a null description or numeric title never throws", () => {
+  assert.doesNotThrow(() =>
+    buildJf2(
+      { ...item, description: null, title: 12345 },
+      { postType: "note", content: "{{description}}", linkProperty: null, status: "draft" },
+    ),
+  );
+});
+
 test("defaults are offered per post type", () => {
   assert.equal(defaultLinkProperty("bookmark"), "bookmark-of");
   assert.equal(defaultLinkProperty("note"), null);

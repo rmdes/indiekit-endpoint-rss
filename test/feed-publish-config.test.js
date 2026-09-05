@@ -129,6 +129,20 @@ test("enabled and publish can still be sent independently", async () => {
   assert.equal(feed().publish, undefined);
 });
 
+test("missing post type configuration fails closed, not open", async () => {
+  // A gate that silently disappears when its own config is missing is worse
+  // than no gate: it looks like protection while providing none.
+  const { request, response, sent } = harness(
+    { url: "https://example.com/feed" },
+    { publish: { enabled: true, postType: "bookmark" } },
+    {},
+  );
+
+  await feedsController.toggle(request, response);
+
+  assert.equal(sent.status, 500);
+});
+
 test("a request changing nothing is rejected", async () => {
   const { request, response, sent } = harness(
     { url: "https://example.com/feed" },

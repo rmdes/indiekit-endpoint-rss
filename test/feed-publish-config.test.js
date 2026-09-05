@@ -13,12 +13,14 @@ const FEED_ID = new ObjectId();
  * @param {object} [publication] - Publication config exposed on app.locals
  * @returns {object} request, response, and a peek at the stored feed
  */
-function harness(feed, body, publication = { postTypes: { note: {}, bookmark: {} } }) {
+function harness(feed, body, publication = { postTypes: { note: {}, bookmark: {} } }, clash = null) {
   let stored = { _id: FEED_ID, ...feed };
   const sent = {};
 
   const feedsCollection = {
-    findOne: async () => stored,
+    // A url in the query means the controller is checking for a clash with a
+    // *different* feed, not fetching this one.
+    findOne: async (query = {}) => (query.url ? clash : stored),
     findOneAndUpdate: async (filter, update) => {
       stored = { ...stored, ...update.$set };
       return stored;
@@ -152,4 +154,44 @@ test("a request changing nothing is rejected", async () => {
   await feedsController.toggle(request, response);
 
   assert.equal(sent.status, 400);
+});
+
+test("a feed's url can be corrected, keeping its cached items", async () => {
+  // Items key on feedId, so correcting the url preserves them. Deleting and
+  // re-adding the feed would drop every item, and with publishing on, every
+  // postedAt marker — the whole backlog would be published again.
+  const { request, response, feed } = harness(
+    { url: "https://exmaple.com/feed", lastError: "HTTP 404" },
+    { url: "https://example.com/feed" },
+  );
+
+  await feedsController.toggle(request, response);
+
+  assert.equal(feed().url, "https://example.com/feed");
+  assert.equal(feed().lastError, null, "the old url's error is stale once fixed");
+});
+
+test("a malformed url is rejected", async () => {
+  const { request, response, sent } = harness(
+    { url: "https://example.com/feed" },
+    { url: "not a url" },
+  );
+
+  await feedsController.toggle(request, response);
+
+  assert.equal(sent.status, 400);
+});
+
+test("a url already used by another feed is rejected", async () => {
+  const { request, response, sent, feed } = harness(
+    { url: "https://example.com/feed" },
+    { url: "https://taken.example/feed" },
+    { postTypes: { note: {} } },
+    { _id: new ObjectId(), url: "https://taken.example/feed" },
+  );
+
+  await feedsController.toggle(request, response);
+
+  assert.equal(sent.status, 409);
+  assert.equal(feed().url, "https://example.com/feed", "unchanged on conflict");
 });

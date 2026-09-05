@@ -62,7 +62,12 @@
       "status": "Post status",
       "draft": "Draft",
       "published": "Published",
-      "save": "Save publish settings"
+      "save": "Save settings"
+    },
+    "settings": {
+      "title": "Feed settings",
+      "url": "Feed URL",
+      "urlHint": "Correcting this keeps the cached items; removing and re-adding the feed would lose them."
     }
   }
 }

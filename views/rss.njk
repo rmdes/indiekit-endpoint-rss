@@ -108,12 +108,21 @@
               selected: feed.publish.postType == type
             }), typeItems) %}
             {% endfor %}
-            {% set publishSummary %}{{ __("rss.publish.title") }}{% if feed.publish.enabled %} &bull; {{ feed.publish.postType }}{% endif %}{% endset %}
+            {% set publishSummary %}{{ __("rss.settings.title") }}{% if feed.publish.enabled %} &bull; {{ feed.publish.postType }}{% endif %}{% endset %}
             {% call details({
               classes: "rss-publish",
               summary: publishSummary
             }) %}
               <form data-publish-feed="{{ feed.id }}">
+                {{ input({
+                  id: "feed-url-" + feed.id,
+                  name: "url",
+                  type: "url",
+                  label: __("rss.settings.url"),
+                  hint: __("rss.settings.urlHint"),
+                  value: feed.url
+                }) }}
+
                 {{ checkboxes({
                   idPrefix: "publish-enabled-" + feed.id,
                   name: "enabled",
@@ -374,7 +383,7 @@
         const response = await fetch(`{{ mountPath }}/api/feeds/${feedId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ publish })
+          body: JSON.stringify({ url: data.get('url'), publish })
         });
 
         if (response.ok) {

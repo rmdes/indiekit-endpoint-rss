@@ -38,6 +38,8 @@ function makeCollections(items) {
             return value !== operand;
           case "$nin":
             return !operand.includes(value);
+          case "$exists":
+            return (value !== null) === operand;
           default:
             throw new Error(`unsupported operator: ${operator}`);
         }
@@ -154,4 +156,21 @@ test("still prunes old items when recent ones fill the floor", async () => {
 
   assert.equal(pruned, 4);
   assert.equal(remaining().length, 10);
+});
+
+test("never prunes an item that has already been published", async () => {
+  // A pruned item that the feed later re-serves would come back without
+  // postedAt and be published a second time.
+  const { itemsCollection, feedsCollection, remaining } = makeCollections([
+    ...Array.from({ length: 12 }, () => ({ feedId: "a", pubDate: daysAgo(400) })),
+    { feedId: "a", pubDate: daysAgo(400), postedAt: "2026-01-01T00:00:00.000Z" },
+  ]);
+
+  await pruneOldItems(itemsCollection, feedsCollection, 30, 10);
+
+  assert.equal(
+    remaining().filter((doc) => doc.postedAt).length,
+    1,
+    "the published item must survive even outside the floor",
+  );
 });

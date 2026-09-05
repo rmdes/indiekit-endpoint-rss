@@ -83,25 +83,28 @@
 }
 
 .rss-feed-item {
-  align-items: center;
+  align-items: flex-start;
   border-block-end: 1px solid var(--color-border);
   display: flex;
-  flex-wrap: wrap;
   gap: var(--space-s);
   padding: var(--space-s) 0;
 }
 
-/* The publish disclosure gets a row of its own. As a plain flex sibling of the
-   icon, info and actions it was squeezed into the same line and overlapped the
-   feed metadata. Ordering keeps the actions on the first row: without it the
-   disclosure wraps first and pushes them onto a third. */
-.rss-feed-actions {
-  order: 1;
+/* The publish disclosure lives inside the feed's own column. As a full-width
+   flex row it turned every feed into three rows and put a bar wider than the
+   feed between each entry, which made the list unscannable. Its summary stays
+   quiet so the feed title remains what the eye lands on. */
+.rss-publish {
+  margin-block-start: var(--space-2xs);
 }
 
-.rss-publish {
-  flex-basis: 100%;
-  order: 2;
+.rss-publish .details__summary {
+  color: var(--color-text-secondary);
+  font-size: var(--step--1);
+}
+
+.rss-publish .details__main {
+  padding-block-start: var(--space-2xs);
 }
 
 .rss-feed-item:last-child {

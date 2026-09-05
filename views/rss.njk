@@ -100,79 +100,79 @@
             {% if feed.lastError %}
             <div class="rss-feed-error">{{ feed.lastError }}</div>
             {% endif %}
+            {% set typeItems = [] %}
+            {% for type in postTypes %}
+            {% set typeItems = (typeItems.push({
+              text: type,
+              value: type,
+              selected: feed.publish.postType == type
+            }), typeItems) %}
+            {% endfor %}
+            {% set publishSummary %}{{ __("rss.publish.title") }}{% if feed.publish.enabled %} &bull; {{ feed.publish.postType }}{% endif %}{% endset %}
+            {% call details({
+              classes: "rss-publish",
+              summary: publishSummary
+            }) %}
+              <form data-publish-feed="{{ feed.id }}">
+                {{ checkboxes({
+                  idPrefix: "publish-enabled-" + feed.id,
+                  name: "enabled",
+                  items: [{
+                    value: "true",
+                    label: __("rss.publish.enabled"),
+                    checked: feed.publish.enabled
+                  }]
+                }) }}
+
+                {{ select({
+                  id: "publish-post-type-" + feed.id,
+                  name: "postType",
+                  label: __("rss.publish.postType"),
+                  items: typeItems
+                }) }}
+
+                {{ input({
+                  id: "publish-content-" + feed.id,
+                  name: "content",
+                  label: __("rss.publish.content"),
+                  hint: __("rss.publish.contentHint"),
+                  value: feed.publish.content or "{{description}}"
+                }) }}
+
+                {{ input({
+                  id: "publish-link-property-" + feed.id,
+                  name: "linkProperty",
+                  label: __("rss.publish.linkProperty"),
+                  hint: __("rss.publish.linkPropertyHint"),
+                  optional: true,
+                  value: feed.publish.linkProperty
+                }) }}
+
+                {{ select({
+                  id: "publish-status-" + feed.id,
+                  name: "status",
+                  label: __("rss.publish.status"),
+                  items: [
+                    {
+                      text: __("rss.publish.draft"),
+                      value: "draft",
+                      selected: feed.publish.status != "published"
+                    },
+                    {
+                      text: __("rss.publish.published"),
+                      value: "published",
+                      selected: feed.publish.status == "published"
+                    }
+                  ]
+                }) }}
+
+                {{ button({
+                  type: "submit",
+                  text: __("rss.publish.save")
+                }) }}
+              </form>
+            {% endcall %}
           </div>
-          {% set typeItems = [] %}
-          {% for type in postTypes %}
-          {% set typeItems = (typeItems.push({
-            text: type,
-            value: type,
-            selected: feed.publish.postType == type
-          }), typeItems) %}
-          {% endfor %}
-          {% set publishSummary %}{{ __("rss.publish.title") }}{% if feed.publish.enabled %} &bull; {{ feed.publish.postType }}{% endif %}{% endset %}
-          {% call details({
-            classes: "rss-publish",
-            summary: publishSummary
-          }) %}
-            <form data-publish-feed="{{ feed.id }}">
-              {{ checkboxes({
-                idPrefix: "publish-enabled-" + feed.id,
-                name: "enabled",
-                items: [{
-                  value: "true",
-                  label: __("rss.publish.enabled"),
-                  checked: feed.publish.enabled
-                }]
-              }) }}
-
-              {{ select({
-                id: "publish-post-type-" + feed.id,
-                name: "postType",
-                label: __("rss.publish.postType"),
-                items: typeItems
-              }) }}
-
-              {{ input({
-                id: "publish-content-" + feed.id,
-                name: "content",
-                label: __("rss.publish.content"),
-                hint: __("rss.publish.contentHint"),
-                value: feed.publish.content or "{{description}}"
-              }) }}
-
-              {{ input({
-                id: "publish-link-property-" + feed.id,
-                name: "linkProperty",
-                label: __("rss.publish.linkProperty"),
-                hint: __("rss.publish.linkPropertyHint"),
-                optional: true,
-                value: feed.publish.linkProperty
-              }) }}
-
-              {{ select({
-                id: "publish-status-" + feed.id,
-                name: "status",
-                label: __("rss.publish.status"),
-                items: [
-                  {
-                    text: __("rss.publish.draft"),
-                    value: "draft",
-                    selected: feed.publish.status != "published"
-                  },
-                  {
-                    text: __("rss.publish.published"),
-                    value: "published",
-                    selected: feed.publish.status == "published"
-                  }
-                ]
-              }) }}
-
-              {{ button({
-                type: "submit",
-                text: __("rss.publish.save")
-              }) }}
-            </form>
-          {% endcall %}
           <div class="rss-feed-actions">
             <label class="rss-toggle">
               <input

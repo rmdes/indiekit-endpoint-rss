@@ -19,6 +19,7 @@ const defaults = {
   maxConcurrentFetches: 3,
   retentionDays: 30,
   minItemsPerFeed: 10,
+  maxPostsPerCycle: 10,
 };
 
 export default class RssEndpoint {

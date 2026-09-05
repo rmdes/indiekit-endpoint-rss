@@ -33,6 +33,18 @@ test("the port falls back to Indiekit's own default", () => {
   assert.equal(context.micropubEndpoint, "http://localhost:3000/micropub");
 });
 
+test("a malformed port yields null rather than throwing", () => {
+  // This runs before runSync's try block. A throw here would abort the whole
+  // cycle — fetch, inserts and prune included — not just publishing.
+  assert.equal(
+    resolvePublishContext(
+      { micropubEndpoint: "/micropub", port: "80 80" },
+      { me: "https://example.com/" },
+    ),
+    null,
+  );
+});
+
 test("missing configuration yields null rather than a broken url", () => {
   assert.equal(resolvePublishContext({}, {}), null);
   assert.equal(resolvePublishContext({ micropubEndpoint: "/micropub" }, {}), null);

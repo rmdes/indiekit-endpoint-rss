@@ -93,9 +93,15 @@
 
 /* The publish disclosure gets a row of its own. As a plain flex sibling of the
    icon, info and actions it was squeezed into the same line and overlapped the
-   feed metadata. */
+   feed metadata. Ordering keeps the actions on the first row: without it the
+   disclosure wraps first and pushes them onto a third. */
+.rss-feed-actions {
+  order: 1;
+}
+
 .rss-publish {
   flex-basis: 100%;
+  order: 2;
 }
 
 .rss-feed-item:last-child {

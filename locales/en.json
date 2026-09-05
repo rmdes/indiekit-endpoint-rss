@@ -56,7 +56,7 @@
       "enabled": "Create posts from this feed",
       "postType": "Post type",
       "content": "Content template",
-      "contentHint": "Placeholders: {{title}} {{link}} {{description}} {{content}} {{author}} {{sourceTitle}}",
+      "contentHint": "Available: title, link, description, content, author, sourceTitle. Write each one in double braces, as shown below.",
       "linkProperty": "Link property",
       "linkPropertyHint": "Discovery property carrying the item URL, e.g. bookmark-of. Leave empty for a plain note or article.",
       "status": "Post status",

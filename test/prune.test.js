@@ -192,3 +192,13 @@ test("postedAt: null counts as existing, not absent", async () => {
     "an item with postedAt: null must survive, same as one already published",
   );
 });
+
+test("the retention floor is derived from what a sync can store", async () => {
+  const { retentionFloor } = await import("../lib/sync.js");
+
+  // Pruning an item the feed still serves only makes the next sync re-insert
+  // it. Measured on rmendes before this: 49 items churned every cycle.
+  assert.equal(retentionFloor({ minItemsPerFeed: 10, maxItemsPerFeed: 50 }), 50);
+  assert.equal(retentionFloor({ minItemsPerFeed: 80, maxItemsPerFeed: 50 }), 80);
+  assert.equal(retentionFloor({}), 50);
+});

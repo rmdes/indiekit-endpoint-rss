@@ -195,3 +195,31 @@ test("a url already used by another feed is rejected", async () => {
   assert.equal(sent.status, 409);
   assert.equal(feed().url, "https://example.com/feed", "unchanged on conflict");
 });
+
+test("an article feed left blank gets the rich content template", async () => {
+  // The form used to prefill "{{description}}" whatever the post type, so
+  // saving an article feed stored the stripped-text template and every post
+  // came out as one flat block. Blank must fall through to the post type's
+  // own default.
+  const { request, response, feed } = harness(
+    { url: "https://example.com/feed", enabled: true },
+    { publish: { enabled: true, postType: "article", content: "" } },
+    { postTypes: { article: {}, note: {} } },
+  );
+
+  await feedsController.toggle(request, response);
+
+  assert.equal(feed().publish.content, "{{content}}");
+});
+
+test("a note feed left blank still gets the summary template", async () => {
+  const { request, response, feed } = harness(
+    { url: "https://example.com/feed", enabled: true },
+    { publish: { enabled: true, postType: "note", content: "" } },
+    { postTypes: { article: {}, note: {} } },
+  );
+
+  await feedsController.toggle(request, response);
+
+  assert.equal(feed().publish.content, "{{description}}");
+});

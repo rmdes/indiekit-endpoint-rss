@@ -145,7 +145,8 @@
                   name: "content",
                   label: __("rss.publish.content"),
                   hint: __("rss.publish.contentHint"),
-                  value: feed.publish.content or "{{description}}"
+                  value: feed.publish.content,
+                  attributes: { placeholder: feed.contentDefault }
                 }) }}
 
                 {{ input({
